@@ -36,7 +36,7 @@ router.post('/student', async (req, res) => {
 router.get('/students', async (req, res) => {
 	try {
 		const students = await Student.findAll();
-		res.send(students);
+		res.json(students);
 	} catch (err) {
 		console.log(err);
 		res.status(500).send('Error fetching students');

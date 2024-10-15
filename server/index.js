@@ -8,7 +8,9 @@ const app = express();
 const PORT = process.env.PORT || 3300;
 
 app.use(express.json());
-app.use('/', routes);
+
+// Prefix all routes with /api
+app.use('/api', routes);
 
 models.sequelize.sync().then(() => {
 	app.listen(PORT, () => {
