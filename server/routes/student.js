@@ -7,10 +7,25 @@ const router = express.Router();
 
 // create a student
 router.post('/student', async (req, res) => {
-	const { name, gender, email, password, class_id, grade_id } = req.body;
+	const { name, gender, email, password, className, level } = req.body;
 	try {
-		const student = await Student.create({ name, gender, email, password, class_id, grade_id });
-		res.send('Student created successfully');
+		// Get the grade by level
+		const grade = await Grade.findOne({ where: { level } });
+
+		if (!grade) {
+			return res.status(404).json({ error: 'Grade not found' });
+		}
+
+		// Get the class by name
+		const class_ = await Class.findOne({ where: { name: className } });
+
+		if (!class_) {
+			return res.status(404).json({ error: 'Class not found' });
+		}
+
+		const student = await Student.create({name, gender, email, password, class_id: class_.id, grade_id: grade.id });
+		res.json(student);
+		console.log('Student created');
 	} catch (err) {
 		console.log(err);
 		res.status(500).send('Error creating student');
@@ -52,29 +67,5 @@ router.get('/student', async (req, res) => {
 	}
 });
 
-// get students by class
-router.get('/students/class/:class_id', async (req, res) => {
-	const { class_id } = req.params;
-	try {
-		const students = await Student.findAll({ where: { class_id } });
-		res.send(students);
-	} catch (err) {
-		console.log(err);
-		res.status(500).send('Error fetching students');
-	}
-});
-
-// get students by grade level
-router.get('/students/grade/:level', async (req, res) => {
-	const { level } = req.params;
-	try {
-		const grade = await Grade.findOne({ where: { level } });
-		const students = await Student.findAll({ where: { grade_id: grade.id } });
-		res.send(students);
-	} catch (err) {
-		console.log(err);
-		res.status(500).send('Error fetching students');
-	}
-});
 
 export default router;

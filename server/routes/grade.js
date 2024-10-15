@@ -1,53 +1,30 @@
-// creating a router for the grade model
-
 import express from 'express';
+import models from '../models/index.js';
 
+const { Grade } = models;
 const router = express.Router();
 
 // create a grade
-router.post('/grade', (req, res) => {
-	const level = req.body.level;
-
-	pool.query(
-		'INSERT INTO grade (level) VALUES ($1)',
-		[level],
-		(err, result) => {
-			if (err) {
-				console.log(err);
-			}
-			else {
-				res.send('Grade created successfully');
-			}
-		}
-	);
-
+router.post('/grade', async (req, res) => {
+	const { level } = req.body;
+	try {
+		const grade = await Grade.create({ level });
+		res.json(grade);
+		console.log('Grade created');
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('Error creating grade');
+	}
 });
 
-// get all grades
-
-router.get('/grades', (req, res) => {
-	pool.query('SELECT * FROM grade', (err, result) => {
-		if (err) {
-			console.log(err);
-		}
-		else {
-			res.send(result.rows);
-		}
-	});
-});
-
-// get a grade by level
-router.get('/grade/:level', (req, res) => {
-	const { level } = req.params;
-	pool.query('SELECT * FROM grades WHERE level = $1', [level], (err, result) => {
-		if (err) {
-			console.log(err);
-		}
-		else {
-			res.send(result.rows);
-		}
-	});
-});
-
+router.get('/grade', async (req, res) => {
+	try {
+		const grades = await Grade.findAll()
+		res.json(grades);
+	} catch (err) {
+		console.error(err);
+		res.status(500).send('error returning grade');
+	}
+})
 
 export default router;
