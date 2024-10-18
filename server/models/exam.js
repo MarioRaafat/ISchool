@@ -10,6 +10,8 @@ export default (sequelize, DataTypes) => {
 		startTime: DataTypes.STRING,
 		endTime: DataTypes.STRING,
 		maxGrade: DataTypes.INTEGER,
+		description: DataTypes.TEXT, // Add description column
+		filePath: DataTypes.STRING, // Add filePath column
 		teacher_id: DataTypes.UUID,
 		class_id: DataTypes.UUID
 	}, {});

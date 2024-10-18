@@ -1,12 +1,9 @@
-import express from 'express';
 import models from '../models/index.js';
-import { where } from 'sequelize';
 
-const router = express.Router();
 const { Class, Grade } = models;
 
-// create class
-router.post('/class', async (req, res) => {
+// Create class
+export const createClass = async (req, res) => {
 	const { name, level } = req.body;
 
 	try {
@@ -26,11 +23,10 @@ router.post('/class', async (req, res) => {
 		console.error(err);
 		res.status(500).send('Error creating class');
 	}
-});
+};
 
-
-// get all classes
-router.get('/classes', async (req, res) => {
+// Get all classes
+export const getAllClasses = async (req, res) => {
 	try {
 		const classes = await Class.findAll();
 		res.json(classes);
@@ -38,10 +34,10 @@ router.get('/classes', async (req, res) => {
 		console.error(err);
 		res.status(500).send('Error fetching classes');
 	}
-});
+};
 
-// get a class by name using two different methods
-router.get('/class/:name', async (req, res) => {
+// Get a class by name
+export const getClassByName = async (req, res) => {
 	const { name } = req.params;
 	try {
 		const class_ = await Class.findOne({ where: { name } });
@@ -50,7 +46,4 @@ router.get('/class/:name', async (req, res) => {
 		console.error(err);
 		res.status(500).send('Error fetching class');
 	}
-});
-
-
-export default router;
+};

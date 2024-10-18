@@ -17,7 +17,8 @@ const corsOptions = {
 };
 
 
-//app.use("/uploads/profiles", express.static("uploads/profiles"));   we will need it if we decided to store the images in the server for students and teachers
+//app.use("/uploads/profiles", express.static("uploads/profiles"));  
+// we will need it if we decided to store the images in the server for students and teachers
 
 app.use(express.json());
 app.use(cors(corsOptions));
@@ -25,9 +26,7 @@ app.use(cookieParser());
 
 
 app.use('/api/author', authRouter);
-app.use('/api/teacher', routes);
-app.use('/api/student', routes);
-app.use('/api/grade', routes);
+app.use('/api', routes);
 
 models.sequelize.sync().then(() => {
 	app.listen(PORT, () => {

@@ -1,14 +1,19 @@
 import express from 'express';
-import teacherController from '../controllers/teacher.js';
-import gradeController from '../controllers/grade.js';
-import studentController from '../controllers/student.js';
-import classController from '../controllers/class.js';
+import examRouter from './examRouter.js';
+import studentRouter from './studentRouter.js';
+import teacherRouter from './teacherRouter.js';
+import gradeRouter from './gradeRouter.js';
+import classRouter from './classRouter.js';
+import assignmentRouter from './assignmentRouter.js';
 
 const router = express.Router();
 
-router.use(teacherController);
-router.use(studentController);
-router.use(gradeController);
-router.use(classController);
+router.use('/teacher', teacherRouter);
+router.use('/grade', gradeRouter);
+router.use('/student', studentRouter);
+router.use('/class', classRouter);
+router.use('/assignment', assignmentRouter);
+router.use('/exam', examRouter);
+
 
 export default router;

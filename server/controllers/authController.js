@@ -12,7 +12,8 @@ const createToken = async (email, id) => {
 }
 
 export const login = async(req, res) => {
-    const {email, password, user} = req.body;
+	const { email, password, user } = req.body;
+	
     if (!email || !password) {
         return res.status(400).send('Email and password are required');
     }
