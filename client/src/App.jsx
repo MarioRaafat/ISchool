@@ -11,7 +11,7 @@ function App() {
               <Auth />
             } />
 
-            <Route path="*" element={<h1>Home</h1>} />
+            <Route path="*" element={<Auth/>} />
         </Routes>
     </BrowserRouter>
   )
