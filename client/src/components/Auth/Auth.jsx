@@ -7,12 +7,14 @@ import { useToast } from "@/hooks/use-toast"
 import { apiClient } from "@/lib/apiClient.js";
 import { LOGIN_ROUTE } from "@/utils/constants";
 import { useNavigate } from "react-router-dom";
+import {useAppstore} from "../../../store/index.js";
 
 const Auth = () => {
     const navigate = useNavigate();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [user, setUser] = useState("student");
+    const { setUserInfo, userInfo } = useAppstore();
     const { toast } = useToast();
 
     const validateLogin = () => {
@@ -35,8 +37,10 @@ const Auth = () => {
                 const response = await apiClient.post(`${LOGIN_ROUTE}`, { email, password, user }, { withCredentials: true });
                 if (response.status === 200) {
                     toast({ title: "Logged In successfully" });
-                    //setUserInfo(response.data.user); // here I will set the user info in a store later
-                    // here I will navigate to the dashboard of Home
+                    const userData = response.data.user;
+                    userData.type = user;
+                    setUserInfo(userData);
+                    navigate("/home");
                 } else {
                     toast({ variant: "destructive", title: "Uh oh! Something went wrong.", description: "There was a problem with your request." });
                 }
@@ -63,7 +67,8 @@ const Auth = () => {
             <div className="absolute w-[200px] h-[200px] bg-[#f3d1ff] rounded-full bottom-[15%] left-[20%] z-0 opacity-60"></div>
 
             {/* Auth Card */}
-            <div className="auth-card relative w-[90%] sm:w-[60%] md:w-[40%] h-auto p-10 bg-gradient-to-b from-[#eceaff] to-[#e0d3f7] flex flex-col items-center justify-center rounded-2xl shadow-lg z-10">
+            <div className="auth-card relative w-[90%] sm:w-[60%] md:w-[40%] h-auto p-10 bg-gradient-to-b from-[#eceaff] to-[#e0d3f7] flex flex-col items-center justify-center rounded-2xl shadow-lg z-10"
+                 style={{ boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)' }}>
                 <div className="auth-card-label flex justify-center w-full mt-4">
                     <p className="text-5xl font-bold text-[#6c13d7]">ISchool</p>
                 </div>
