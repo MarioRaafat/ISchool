@@ -1,6 +1,9 @@
 # CLion IDE
 .idea
 
+#uploads
+uploads
+
 # Logs
 logs
 *.log
