@@ -46,6 +46,8 @@ export const login = async (req, res) => {
       token,
       user: {
         id: User.id,
+        classId: User.class_id,
+        gradeId: User.grade_id,
         firstName: User.firstName,
         lastName: User.lastName,
         email: User.email,

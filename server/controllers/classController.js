@@ -65,11 +65,15 @@ export const addSubjectToClass = async (req, res) => {
 };
 
 export const getSubjectsByClass = async (req, res) => {
-	const { classId } = req.params;
+	const { classId } = req.body;
+	console.log(classId);
 	try {
 		const classInstance = await Class.findByPk(classId);
 		if (classInstance) {
 			const subjects = await classInstance.getSubjects();
+			// note: this is not the best way to return the subjects, you should return only the required fields
+			// and not the entire object
+			// it will be better to do something like the format that was used in AuthController.js
 			res.status(200).json(subjects);
 		} else {
 			res.status(404).json({ message: 'Class not found' });

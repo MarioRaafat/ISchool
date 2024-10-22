@@ -7,3 +7,8 @@ export const UPDATE_USER_INFO = `${AUTH_ROUTE}/update-user-info`;
 export const ADD_PROFILE_IMG = `${AUTH_ROUTE}/add-profile-image`;
 export const DELETE_PROFILE_IMG = `${AUTH_ROUTE}/delete-profile-image`;
 export const LOGOUT_ROUTE = `${AUTH_ROUTE}/logout`;
+
+
+export const CLASS_ROUTE = "api/class";
+
+export const COURSES_ROUTE = `${CLASS_ROUTE}/courses`;

@@ -3,8 +3,12 @@ import { useAppstore } from "../../../store/index.js";
 import { useEffect, useState } from "react";
 import SideBarStudent from "../SideBar/sideBarStudent";
 import Modal from "../ui/Modal";
+import { apiClient } from "@/lib/apiClient.js";
+import {COURSES_ROUTE} from "@/utils/constants.js";
 
 const courses = [
+
+    // don't forget to change the course description in database and add time to subject_class table
   { name: "Mathematics", time: "10:00 AM", description: "Mathematics course description" },
   { name: "English", time: "11:00 AM", description: "English course description" },
   { name: "Science", time: "12:00 PM", description: "Science course description" },
@@ -17,12 +21,15 @@ const courses = [
 
 const CoursesStudent = () => {
   const { userInfo } = useAppstore();
+  const {classId} = userInfo;
   const [courseList, setCourseList] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-	  // Fetch courses or use static list
+      apiClient.post(COURSES_ROUTE, {classId}).then((response) => {
+        // setCourseList(response.data);
+      });
 	  setCourseList(courses);
   }, []);
 
@@ -40,7 +47,7 @@ const CoursesStudent = () => {
     <div className="flex h-screen w-screen overflow-x-hidden">
       <SideBarStudent />
       <div className="flex-1 p-4">
-        <h1 className="text-2xl font-bold mb-4 my-4">Courses</h1>
+        <h1 className="text-2xl font-bold my-8">Courses</h1>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {courseList.map((course, index) => (
             <div
