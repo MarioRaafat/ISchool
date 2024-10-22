@@ -1,6 +1,6 @@
 import models from '../models/index.js';
 
-const { Class, Grade } = models;
+const { Subject, Class, Grade } = models;
 
 // Create class
 export const createClass = async (req, res) => {
@@ -47,3 +47,35 @@ export const getClassByName = async (req, res) => {
 		res.status(500).send('Error fetching class');
 	}
 };
+
+export const addSubjectToClass = async (req, res) => {
+	const { classId, subjectId } = req.body;
+	try {
+		const classInstance = await Class.findByPk(classId);
+		const subjectInstance = await Subject.findByPk(subjectId);
+		if (classInstance && subjectInstance) {
+			await classInstance.addSubject(subjectInstance);
+			res.status(200).json({ message: 'Subject added to class successfully' });
+		} else {
+			res.status(404).json({ message: 'Class or Subject not found' });
+		}
+	} catch (error) {
+		res.status(500).json({ message: 'An error occurred', error });
+	}
+};
+
+export const getSubjectsByClass = async (req, res) => {
+	const { classId } = req.params;
+	try {
+		const classInstance = await Class.findByPk(classId);
+		if (classInstance) {
+			const subjects = await classInstance.getSubjects();
+			res.status(200).json(subjects);
+		} else {
+			res.status(404).json({ message: 'Class not found' });
+		}
+	} catch (error) {
+		res.status(500).json({ message: 'An error occurred', error });
+	}
+}
+

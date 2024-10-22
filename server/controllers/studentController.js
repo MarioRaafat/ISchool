@@ -2,6 +2,8 @@ import models from '../models/index.js';
 
 const { Student, Class, Grade } = models;
 
+
+
 // Get student by email (pk)
 export const getStudentByEmail = async (req, res) => {
 	try {
@@ -55,3 +57,4 @@ export const createStudent = async (req, res) => {
 		res.status(500).json({ message: 'Error creating student' });
 	}
 };
+
