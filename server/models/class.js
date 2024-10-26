@@ -1,3 +1,4 @@
+// server/models/class.js
 'use strict';
 export default (sequelize, DataTypes) => {
 	const Class = sequelize.define('Class', {
@@ -10,11 +11,10 @@ export default (sequelize, DataTypes) => {
 		grade_id: DataTypes.UUID
 	}, {});
 	Class.associate = function (models) {
-		// associations can be defined here
-		Class.belongsTo(models.Grade, { foreignKey: 'grade_id' });
-		Class.hasMany(models.Student);
-		Class.belongsToMany(models.Teacher, { through: 'class_teachers' });
-		Class.belongsToMany(models.Subject, { through: 'class_subjects' });
+		Class.belongsTo(models.Grade, { foreignKey: 'grade_id', as: 'Grade' });
+		Class.hasMany(models.Student, { as: 'Students', foreignKey: 'class_id' });
+		Class.belongsToMany(models.Teacher, { through: 'class_teachers', as: 'Teachers' });
+		Class.belongsToMany(models.Subject, { through: 'class_subjects', as: 'Subjects' });
 	};
 	return Class;
 };

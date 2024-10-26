@@ -1,3 +1,4 @@
+// server/models/teacher.js
 'use strict';
 export default (sequelize, DataTypes) => {
 	const Teacher = sequelize.define('Teacher', {
@@ -24,7 +25,8 @@ export default (sequelize, DataTypes) => {
 			allowNull: false,
 			unique: true,
 		},
-		phone: DataTypes.STRING
+		phone: DataTypes.STRING,
+		image: DataTypes.STRING
 	}, {
 		indexes: [
 			{
@@ -34,8 +36,7 @@ export default (sequelize, DataTypes) => {
 		]
 	});
 	Teacher.associate = function (models) {
-		// associations can be defined here
-		Teacher.belongsToMany(models.Class, { through: 'class_teachers' });
+		Teacher.belongsToMany(models.Class, { through: 'class_teachers', as: 'Classes' });
 	};
 	return Teacher;
 };

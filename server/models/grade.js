@@ -1,3 +1,4 @@
+// server/models/grade.js
 'use strict';
 export default (sequelize, DataTypes) => {
 	const Grade = sequelize.define('Grade', {
@@ -9,10 +10,9 @@ export default (sequelize, DataTypes) => {
 		level: DataTypes.INTEGER
 	}, {});
 	Grade.associate = function (models) {
-		// associations can be defined here
-		Grade.hasMany(models.Class);
-		Grade.hasMany(models.Student);
-		Grade.hasMany(models.Subject);
+		Grade.hasMany(models.Class, { as: 'Classes', foreignKey: 'grade_id' });
+		Grade.hasMany(models.Student, { as: 'Students', foreignKey: 'grade_id' });
+		Grade.hasMany(models.Subject, { as: 'Subjects', foreignKey: 'grade_id' });
 	};
 	return Grade;
 };

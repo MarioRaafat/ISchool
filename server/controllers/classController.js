@@ -1,6 +1,6 @@
 import models from '../models/index.js';
 
-const { Subject, Class, Grade } = models;
+const { Class, Subject, ClassSubjects, Grade } = models;
 
 // Create class
 export const createClass = async (req, res) => {
@@ -48,13 +48,20 @@ export const getClassByName = async (req, res) => {
 	}
 };
 
+// Add subject to class with startTime, endTime, and day
 export const addSubjectToClass = async (req, res) => {
-	const { classId, subjectId } = req.body;
+	const { classId, subjectId, startTime, endTime, day } = req.body;
 	try {
 		const classInstance = await Class.findByPk(classId);
 		const subjectInstance = await Subject.findByPk(subjectId);
 		if (classInstance && subjectInstance) {
-			await classInstance.addSubject(subjectInstance);
+			await classInstance.addSubject(subjectInstance, {
+				through: {
+					startTime,
+					endTime,
+					day
+				}
+			});
 			res.status(200).json({ message: 'Subject added to class successfully' });
 		} else {
 			res.status(404).json({ message: 'Class or Subject not found' });
@@ -64,16 +71,18 @@ export const addSubjectToClass = async (req, res) => {
 	}
 };
 
+// Get subjects by class
 export const getSubjectsByClass = async (req, res) => {
 	const { classId } = req.body;
-	console.log(classId);
 	try {
 		const classInstance = await Class.findByPk(classId);
 		if (classInstance) {
-			const subjects = await classInstance.getSubjects();
-			// note: this is not the best way to return the subjects, you should return only the required fields
-			// and not the entire object
-			// it will be better to do something like the format that was used in AuthController.js
+			const subjects = await classInstance.getSubjects({
+				through: {
+					model: ClassSubjects,
+					attributes: ['startTime', 'endTime', 'day']
+				}
+			});
 			res.status(200).json(subjects);
 		} else {
 			res.status(404).json({ message: 'Class not found' });
@@ -81,5 +90,4 @@ export const getSubjectsByClass = async (req, res) => {
 	} catch (error) {
 		res.status(500).json({ message: 'An error occurred', error });
 	}
-}
-
+};

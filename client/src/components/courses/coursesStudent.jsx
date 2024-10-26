@@ -5,6 +5,7 @@ import SideBarStudent from "../SideBar/sideBarStudent";
 import Modal from "../ui/Modal";
 import { apiClient } from "@/lib/apiClient.js";
 import {COURSES_ROUTE} from "@/utils/constants.js";
+import { format } from "date-fns";
 
 const courses = [
 
@@ -19,6 +20,11 @@ const courses = [
   { name: "Geography", time: "5:00 PM", description: "Geography course description" }
 ];
 
+const formatTime = (timestamp) => {
+  const date = new Date(parseInt(timestamp, 10));
+  return format(date, 'hh:mm a');
+};
+	
 const CoursesStudent = () => {
   const { userInfo } = useAppstore();
   const {classId} = userInfo;
@@ -28,9 +34,9 @@ const CoursesStudent = () => {
 
   useEffect(() => {
       apiClient.post(COURSES_ROUTE, {classId}).then((response) => {
-        // setCourseList(response.data);
+		  setCourseList(response.data);
+
       });
-	  setCourseList(courses);
   }, []);
 
   const handleCardClick = (course) => {
@@ -68,8 +74,8 @@ const CoursesStudent = () => {
                 className={`${
                   index % 2 ? "text-gray-600" : "text-neutral-300"
                 } text-sm`}
-              >
-                {course.time}
+				  >
+                {formatTime(course.time)}
               </p>
             </div>
           ))}
@@ -79,9 +85,12 @@ const CoursesStudent = () => {
       <Modal isOpen={isModalOpen} onClose={handleCloseModal}>
         {selectedCourse && (
           <div>
-            <h2 className="text-2xl font-bold mb-4">{selectedCourse.name}</h2>
-            <p className="text-gray-600 mb-4">{selectedCourse.time}</p>
+					  <h2 className="text-2xl font-bold mb-4">{selectedCourse.name}</h2>
+					  <p className="text-gray-600 mb-4">Starts: {selectedCourse.startTime}</p>
+					  <p className="text-gray-600 mb-4">Ends: {selectedCourse.endTime}</p>
+            <p className="text-gray-600 mb-4">{formatTime(selectedCourse.time)}</p>
             <p>{selectedCourse.description}</p>
+			
           </div>
         )}
       </Modal>
