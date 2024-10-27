@@ -1,3 +1,4 @@
+// server/models/subject.js
 'use strict';
 export default (sequelize, DataTypes) => {
 	const Subject = sequelize.define('Subject', {
@@ -7,12 +8,17 @@ export default (sequelize, DataTypes) => {
 			primaryKey: true
 		},
 		name: DataTypes.STRING,
-		grade_id: DataTypes.UUID
+		grade_id: DataTypes.UUID,
+		description: DataTypes.TEXT,
+		time: DataTypes.STRING,
+		description: DataTypes.TEXT,
+		startTime: DataTypes.STRING,
+		endTime: DataTypes.STRING,
+		day: DataTypes.STRING
 	}, {});
 	Subject.associate = function (models) {
-		// associations can be defined here
-		Subject.belongsTo(models.Grade, { foreignKey: 'grade_id' });
-		Subject.belongsToMany(models.Class, { through: 'class_subjects' });
+		Subject.belongsTo(models.Grade, { foreignKey: 'grade_id', as: 'Grade' });
+		Subject.belongsToMany(models.Class, { through: 'class_subjects', as: 'Classes' });
 	};
 	return Subject;
 };

@@ -1,3 +1,4 @@
+// server/models/student.js
 'use strict';
 export default (sequelize, DataTypes) => {
 	const Student = sequelize.define('Student', {
@@ -24,21 +25,22 @@ export default (sequelize, DataTypes) => {
 			allowNull: false,
 			unique: true,
 		},
-		phone: DataTypes.STRING
-	}, {
-		indexes: [
-			{
-				unique: true,
-				fields: ['email']
-			}
-		],
-		class_id: DataTypes.UUID,
-		grade_id: DataTypes.UUID
+		phone: DataTypes.STRING,
+		class_id: {
+			type: DataTypes.UUID,
+			allowNull: true,
+			references: {
+				model: 'Classes',
+				key: 'id'
+			},
+			onDelete: 'SET NULL'
+		},
+		grade_id: DataTypes.UUID,
+		image: DataTypes.STRING
 	}, {});
 	Student.associate = function (models) {
-		// associations can be defined here
-		Student.belongsTo(models.Class, { foreignKey: 'class_id' });
-		Student.belongsTo(models.Grade, { foreignKey: 'grade_id' });
+		Student.belongsTo(models.Class, { foreignKey: 'class_id', as: 'Class' });
+		Student.belongsTo(models.Grade, { foreignKey: 'grade_id', as: 'Grade' });
 	};
 	return Student;
 };

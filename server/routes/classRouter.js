@@ -4,18 +4,18 @@ import { createClass, getAllClasses, getClassByName, addSubjectToClass, getSubje
 const router = express.Router();
 
 // Create class
-router.post('/', createClass); // why !!!
+router.post('/', createClass);
 
 // Get all classes
-router.get('/', getAllClasses); // also why !!!
+router.get('/', getAllClasses);
 
 // Get a class by name
 router.get('/:name', getClassByName);
 
-//add subject to class
-router.get('/add_subject', addSubjectToClass);
+// Add subject to class with startTime, endTime, and day
+router.post('/add_subject', addSubjectToClass);
 
-//get all subjects in a class
+// Get all subjects in a class
 router.post('/courses', getSubjectsByClass);
 
 export default router;

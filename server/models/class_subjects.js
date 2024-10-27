@@ -1,37 +1,31 @@
-// server/migrations/xxxx-create-class-subjects.js
+// server/models/class_subjects.js
 'use strict';
-module.exports = {
-	up: async (queryInterface, Sequelize) => {
-		await queryInterface.createTable('class_subjects', {
-			class_id: {
-				type: Sequelize.UUID,
-				allowNull: false,
-				references: {
-					model: 'Classes',
-					key: 'id'
-				},
-				onDelete: 'CASCADE'
+export default (sequelize, DataTypes) => {
+	const ClassSubjects = sequelize.define('ClassSubjects', {
+		class_id: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			references: {
+				model: 'Classes',
+				key: 'id'
 			},
-			subject_id: {
-				type: Sequelize.UUID,
-				allowNull: false,
-				references: {
-					model: 'Subjects',
-					key: 'id'
-				},
-				onDelete: 'CASCADE'
+			onDelete: 'CASCADE'
+		},
+		subject_id: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			references: {
+				model: 'Subjects',
+				key: 'id'
 			},
-			createdAt: {
-				allowNull: false,
-				type: Sequelize.DATE
-			},
-			updatedAt: {
-				allowNull: false,
-				type: Sequelize.DATE
-			}
-		});
-	},
-	down: async (queryInterface, Sequelize) => {
-		await queryInterface.dropTable('class_subjects');
-	}
+			onDelete: 'CASCADE'
+		}
+	}, {
+		timestamps: true
+	});
+	ClassSubjects.associate = function (models) {
+		ClassSubjects.belongsTo(models.Class, { foreignKey: 'class_id', as: 'Class' });
+		ClassSubjects.belongsTo(models.Subject, { foreignKey: 'subject_id', as: 'Subject' });
+	};
+	return ClassSubjects;
 };

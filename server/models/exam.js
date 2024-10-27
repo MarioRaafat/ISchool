@@ -1,3 +1,4 @@
+// server/models/exam.js
 'use strict';
 export default (sequelize, DataTypes) => {
 	const Exam = sequelize.define('Exam', {
@@ -7,18 +8,15 @@ export default (sequelize, DataTypes) => {
 			primaryKey: true
 		},
 		name: DataTypes.STRING,
-		startTime: DataTypes.STRING,
-		endTime: DataTypes.STRING,
+		date: DataTypes.STRING,
 		maxGrade: DataTypes.INTEGER,
-		description: DataTypes.TEXT, // Add description column
-		filePath: DataTypes.STRING, // Add filePath column
+		description: DataTypes.TEXT,
 		teacher_id: DataTypes.UUID,
 		class_id: DataTypes.UUID
 	}, {});
 	Exam.associate = function (models) {
-		// associations can be defined here
-		Exam.belongsTo(models.Teacher, { foreignKey: 'teacher_id' });
-		Exam.belongsTo(models.Class, { foreignKey: 'class_id' });
+		Exam.belongsTo(models.Teacher, { foreignKey: 'teacher_id', as: 'Teacher' });
+		Exam.belongsTo(models.Class, { foreignKey: 'class_id', as: 'Class' });
 	};
 	return Exam;
 };

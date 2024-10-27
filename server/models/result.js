@@ -1,3 +1,4 @@
+// server/models/result.js
 'use strict';
 export default (sequelize, DataTypes) => {
 	const Result = sequelize.define('Result', {
@@ -6,16 +7,13 @@ export default (sequelize, DataTypes) => {
 			defaultValue: DataTypes.UUIDV4,
 			primaryKey: true
 		},
-		score: DataTypes.INTEGER,
-		exam_id: DataTypes.UUID,
-		assignment_id: DataTypes.UUID,
-		student_id: DataTypes.UUID
+		grade: DataTypes.INTEGER,
+		student_id: DataTypes.UUID,
+		exam_id: DataTypes.UUID
 	}, {});
 	Result.associate = function (models) {
-		// associations can be defined here
-		Result.belongsTo(models.Exam, { foreignKey: 'exam_id' });
-		Result.belongsTo(models.Assignment, { foreignKey: 'assignment_id' });
-		Result.belongsTo(models.Student, { foreignKey: 'student_id' });
+		Result.belongsTo(models.Student, { foreignKey: 'student_id', as: 'Student' });
+		Result.belongsTo(models.Exam, { foreignKey: 'exam_id', as: 'Exam' });
 	};
 	return Result;
 };

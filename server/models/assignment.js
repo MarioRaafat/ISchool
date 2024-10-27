@@ -1,3 +1,4 @@
+// server/models/assignment.js
 'use strict';
 export default (sequelize, DataTypes) => {
 	const Assignment = sequelize.define('Assignment', {
@@ -10,15 +11,14 @@ export default (sequelize, DataTypes) => {
 		startDate: DataTypes.STRING,
 		endDate: DataTypes.STRING,
 		maxGrade: DataTypes.INTEGER,
-		description: DataTypes.TEXT, // Add description column
-		filePath: DataTypes.STRING, // Add filePath column
+		description: DataTypes.TEXT,
+		filePath: DataTypes.STRING,
 		teacher_id: DataTypes.UUID,
 		class_id: DataTypes.UUID
 	}, {});
 	Assignment.associate = function (models) {
-		// associations can be defined here
-		Assignment.belongsTo(models.Teacher, { foreignKey: 'teacher_id' });
-		Assignment.belongsTo(models.Class, { foreignKey: 'class_id' });
+		Assignment.belongsTo(models.Teacher, { foreignKey: 'teacher_id', as: 'Teacher' });
+		Assignment.belongsTo(models.Class, { foreignKey: 'class_id', as: 'Class' });
 	};
 	return Assignment;
 };
