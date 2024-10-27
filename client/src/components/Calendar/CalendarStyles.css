@@ -1,0 +1,110 @@
+.rbc-toolbar {
+    border: none;
+}
+
+/* Remove borders around the time header and gutter */
+.rbc-time-header,
+.rbc-time-header-gutter,
+.rbc-time-header-cell {
+    border: none;
+}
+
+/*!* Remove borders in the time content (hours, slots) *!*/
+/*.rbc-time-content > * + * > * {*/
+/*    border: none;*/
+/*}*/
+
+/* Remove borders around time slots */
+.rbc-time-slot,
+.rbc-timeslot-group {
+    border: none;
+}
+
+/* Remove borders for events */
+.rbc-event {
+    border: none;
+    box-shadow: none; /* Remove shadow around events */
+}
+
+/* Remove grid lines between cells */
+.rbc-day-slot .rbc-time-slot {
+    border-top: none;
+}
+
+/* Remove border around the entire calendar container */
+.rbc-calendar {
+    border: none;
+}
+
+/* Remove borders from date columns */
+.rbc-day-bg,
+.rbc-current-time-indicator {
+    border: none;
+}
+
+/* Hide the Next, Back, and Today buttons */
+.rbc-toolbar .rbc-btn-group:nth-child(1) {
+    /*display: none;*/
+}
+
+.rbc-allday-cell {
+    display: none;
+}
+
+/* Style the toolbar for a cleaner look */
+.rbc-toolbar {
+    background-color: #1f1832;
+    color: #b9a3e3;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: row;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Time sidebar styling */
+.rbc-time-header-cell {
+    /*background-color: #1f1832;*/
+    color: #b9a3e3;
+    font-size: 12px;
+    border: none;
+}
+
+
+
+/* Event styles */
+.rbc-event {
+    background-color: #6e52b5;
+    color: white;
+    border-radius: 8px;
+    padding: 5px;
+    border: none;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    max-width: 90%;
+    overflow: hidden;
+}
+
+/* Adjust the size and spacing of hours (e.g., 8 AM to 3 PM) */
+.rbc-timeslot-group {
+    height: 60px;
+}
+
+/* Style the calendar grid lines */
+.rbc-time-content > * + * > * {
+    border-color: #cccccc;
+}
+
+/* Remove extra spacing around the calendar */
+.rbc-time-view, .rbc-time-content {
+    padding: 0;
+    margin: 0;
+}
+
+.rbc-header {
+    border: none;
+}

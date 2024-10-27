@@ -3,6 +3,7 @@ import {BrowserRouter, Routes, Route, Navigate} from 'react-router-dom'
 import Auth from "@/components/Auth/Auth.jsx";
 import Home from "@/components/home/home.jsx";
 import Courses from "@/components/courses/coursesStudent.jsx";
+import MyCalendar from "@/components/Calendar/Calendar.jsx";
 
 function App() {
 
@@ -19,6 +20,9 @@ function App() {
 			  <Route path="/courses" element={
 				<Courses />
 			} />
+            <Route path="/calendar" element={
+                <MyCalendar />
+            }/>
             <Route path="*" element={
                 <Navigate to="/auth"/>
             }/>
