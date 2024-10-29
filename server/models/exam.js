@@ -8,7 +8,8 @@ export default (sequelize, DataTypes) => {
 			primaryKey: true
 		},
 		name: DataTypes.STRING,
-		date: DataTypes.STRING,
+		startDate: DataTypes.DATE,
+		endDate: DataTypes.DATE,
 		maxGrade: DataTypes.INTEGER,
 		description: DataTypes.TEXT,
 		teacher_id: DataTypes.UUID,

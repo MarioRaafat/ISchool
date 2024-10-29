@@ -98,4 +98,16 @@ export const deleteExam = async (req, res) => {
 	}
 };
 
+// Get all exams for a specific teacher
+export const getExamsByTeacher = async (req, res) => {
+	const { teacherId } = req.params;
+	try {
+		const exams = await Exam.findAll({ where: { teacher_id: teacherId } });
+		res.status(200).json(exams);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error fetching exams' });
+	}
+};
+
 export { upload };
