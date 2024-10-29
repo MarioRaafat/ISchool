@@ -75,6 +75,7 @@ export const getSubjectsByClass = async (req, res) => {
 	const { classId } = req.body;
 	try {
 		const classInstance = await Class.findByPk(classId);
+
 		if (classInstance) {
 			const subjects = await classInstance.getSubjects({
 				through: {

@@ -6,28 +6,34 @@ import "./CalendarStyles.css";
 import SideBarTeacher from "@/components/SideBar/sideBarTeacher.jsx";
 import SideBarStudent from "@/components/SideBar/sideBarStudent.jsx";
 import { useAppstore } from "../../../store/index.js";
+import {apiClient} from "@/lib/apiClient.js";
+import {COURSES_ROUTE} from "@/utils/constants.js";
 
 const localizer = momentLocalizer(moment);
 
 const MyCalendar = () => {
     const { userInfo } = useAppstore();
+    const [initialEvents, setInitialEvents] = useState([]);
     const [events, setEvents] = useState([]);
+    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const schoolStartDate = new Date("2024-10-01");
+    const startDayIndex = schoolStartDate.getDay(); // 0 = Sunday, 1 = Monday, etc.
 
     // dummy
-    const initialEvents = [
-        {
-            title: "Math",
-            start: new Date(2024, 8, 27, 13, 0),
-            end: new Date(2024, 8, 27, 14, 0),
-            allDay: false,
-        },
-        {
-            title: "Physics",
-            start: new Date(2024, 8, 28, 10, 0),
-            end: new Date(2024, 8, 28, 12, 0),
-            allDay: false,
-        },
-    ];
+    // const initialEvents = [
+    //     {
+    //         title: "Math",
+    //         start: new Date(2024, 8, 27, 13, 0),
+    //         end: new Date(2024, 8, 27, 14, 0),
+    //         allDay: false,
+    //     },
+    //     {
+    //         title: "Physics",
+    //         start: new Date(2024, 8, 28, 10, 0),
+    //         end: new Date(2024, 8, 28, 12, 0),
+    //         allDay: false,
+    //     },
+    // ];
 
     // Function to generate weekly recurring events
     const generateWeeklyEvents = (title, startDate, endDate, weeks) => {
@@ -51,11 +57,39 @@ const MyCalendar = () => {
     };
 
     useEffect(() => {
-        const recurringEvents = initialEvents.flatMap((event) =>
-            generateWeeklyEvents(event.title, event.start, event.end, 10)
-        );
-        setEvents(recurringEvents);
-    }, []);
+        const fetchingCourses = async () => {
+            const response = await apiClient.post(COURSES_ROUTE, {classId: userInfo.classId},{withCredentials: true});
+            if (response.status === 200 && response.data) {
+                const courses = response.data;
+                const events = courses.map((course) => {
+                    const targetDayIndex = weekDays.indexOf(course.day);
+                    const dayDifference = (targetDayIndex - startDayIndex + 7) % 7 || 7;
+                    let courseStartDateBegin = new Date(schoolStartDate);
+                    let courseStartDateEnd = new Date(schoolStartDate);
+                    courseStartDateBegin.setDate(schoolStartDate.getDate() + dayDifference);
+                    courseStartDateEnd.setDate(schoolStartDate.getDate() + dayDifference);
+                    courseStartDateBegin.setHours(course.startTime.split(" ")[0].split(":")[0], course.startTime.split(" ")[0].split(":")[1]);
+                    courseStartDateEnd.setHours(course.endTime.split(" ")[0].split(":")[0], course.endTime.split(" ")[0].split(":")[1]);
+                    return {
+                        title: course.name,
+                        start: courseStartDateBegin,
+                        end: courseStartDateEnd,
+                        allDay: false,
+                    };
+                }).slice(0, 3); // remove slice to show all courses when you change the date
+                setInitialEvents(events);
+            }
+
+            const recurringEvents = initialEvents.flatMap((event) =>
+                generateWeeklyEvents(event.title, event.start, event.end, 10)
+            );
+            setEvents(recurringEvents);
+        }
+        if (userInfo) {
+            fetchingCourses();
+        }
+
+    }, [userInfo]);
 
     const eventStyleGetter = (event) => {
         const style = {
@@ -113,6 +147,7 @@ const MyCalendar = () => {
             </div>
         );
     };
+
 
     const CalendarComponent = () => (
         <div className="h-full relative w-full">
