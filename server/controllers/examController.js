@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import multer from 'multer';
 
-const { Exam } = models;
+const { Exam, Student } = models;
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -141,5 +141,71 @@ export const getExamsByTeacher = async (req, res) => {
 		res.status(500).json({ message: 'Error fetching exams' });
 	}
 };
+
+export const getExamsByStudent = async (req, res) => {
+	const { studentId } = req.params;
+	try {
+		const student = await Student.findByPk(studentId);
+		if (!student) {
+			return res.status(404).json({ message: 'Student not found' });
+		}
+		const classId = student.class_id;
+		const exams = await Exam.findAll({ where: { class_id: classId } });
+		const filteredExams = exams.map(exam => ({
+			id: exam.id,
+			name: exam.name,
+			description: exam.description,
+			date: exam.startDate.toString().slice(0, 10),
+			startTime: exam.startDate.toString().slice(16, 21),
+			endTime: exam.endDate.toString().slice(16, 21),
+			file: exam.filePath,
+		}));
+
+		res.status(200).json(filteredExams);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error fetching exams' });
+	}
+};
+
+export const getUpcomingExams = async (req, res) => {
+	const { studentId } = req.body;
+	const now = new Date();
+	try {
+		const student = await Student.findByPk(studentId);
+		if (!student) {
+			return res.status(404).json({ message: 'Student not found' });
+		}
+		const classId = student.class_id;
+		const exams = await Exam.findAll({ where: { class_id: classId } });
+		const nextExams = exams
+			.filter(exam => exam.startDate >= now)
+			.map(exam => {
+				const date = exam.startDate.toString().slice(0, 10);
+				let [startHours, startMinutes] = exam.startDate.toString().slice(16, 21).split(':');
+				let [endHours, endMinutes] = exam.endDate.toString().slice(16, 21).split(':');
+				const startPeriod = startHours >= 12 ? 'PM' : 'AM';
+				const endPeriod = endHours >= 12 ? 'PM' : 'AM';
+				startHours = startHours % 12;
+				endHours = endHours % 12;
+
+				return {
+					name: exam.name,
+					date,
+					startTime: `${startHours}:${startMinutes} ${startPeriod}`,
+					endTime: `${endHours}:${endMinutes} ${endPeriod}`,
+					examDate: exam.startDate
+				};
+			})
+			.sort((a, b) => a.examDate - b.examDate) // ascending
+			.slice(0, 3);
+
+		res.status(200).json(nextExams);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error fetching exams' });
+	}
+}
+
 
 export { upload };

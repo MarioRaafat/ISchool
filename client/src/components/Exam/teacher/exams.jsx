@@ -30,6 +30,10 @@ const CurrentExams = () => {
     formData.append('file', file);
 
     try {
+      // a7a 3lek ya 7abibi :D
+      // ystaaaaaaaaaaaaa
+      // ana ktabt "a7a" l2et copilot 3mlha bel4kl da
+      // remove the path from the fetch and replace it with the something from constant file which is the server url (from .env)
       const response = await fetch('https://ischool-production.up.railway.app/api/exam', {
         method: 'POST',
         body: formData,

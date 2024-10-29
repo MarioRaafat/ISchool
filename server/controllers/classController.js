@@ -18,7 +18,6 @@ export const createClass = async (req, res) => {
 		const newClass = await Class.create({ name, grade_id: grade.id });
 
 		res.json(newClass);
-		console.log('A new Class has been created');
 	} catch (err) {
 		console.error(err);
 		res.status(500).send('Error creating class');
@@ -91,3 +90,56 @@ export const getSubjectsByClass = async (req, res) => {
 		res.status(500).json({ message: 'An error occurred', error });
 	}
 };
+
+export const getUpcomingCourses = async (req, res) => {
+	const { classId } = req.body;
+	const weekDays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+	const now = new Date();
+	const currentDayIndex = now.getDay(); // 0 = Sunday, 1 = Monday, etc.
+	const currentTime = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true }); // Format: "hh:mm AM/PM"
+
+	try {
+		const classInstance = await Class.findByPk(classId);
+		let courses;
+		if (classInstance) {
+			 courses = await classInstance.getSubjects({
+				through: {
+					model: ClassSubjects,
+					attributes: ['startTime', 'endTime', 'day']
+				}
+			});
+
+			const nextCourses = courses
+				.map(course => {
+					const courseDate = new Date(now);
+					const courseDayIndex = weekDays.indexOf(course.day);
+					const timeParts = course.startTime.split(' '); // Split time and period (AM/PM)
+					const [hours, minutes] = timeParts[0].split(':').map(Number);
+					const period = timeParts[1];
+
+					const adjustedHours = (period === 'PM' && hours < 12) ? hours + 12 : (period === 'AM' && hours === 12) ? 0 : hours;
+
+					courseDate.setDate(now.getDate() + (courseDayIndex >= currentDayIndex ? courseDayIndex - currentDayIndex : courseDayIndex - currentDayIndex + 7));
+					courseDate.setHours(adjustedHours, minutes, 0, 0); // Set hours and minutes
+
+					return {
+						name: course.name,
+						courseDate,
+						startTime: course.startTime,
+						endTime: course.endTime,
+						day: course.day
+					};
+
+				})
+				.filter(course => course.courseDate >= now)
+				.sort((a, b) => a.courseDate - b.courseDate)
+				.slice(0, 3);
+
+			res.status(200).json(nextCourses);
+		} else {
+			res.status(404).json({ message: 'Class not found' });
+		}
+	} catch (error) {
+		res.status(500).json({ message: 'An error occurred', error });
+	}
+}

@@ -3,13 +3,10 @@ import { getStudentByEmail, getAllStudents, createStudent } from '../controllers
 
 const router = express.Router();
 
-// Get student by email (pk)
 router.get('/:email', getStudentByEmail);
-
-// Get all students
 router.get('/', getAllStudents);
-
-// Create student
 router.post('/', createStudent);
+
+
 
 export default router;
