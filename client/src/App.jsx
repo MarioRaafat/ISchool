@@ -4,6 +4,7 @@ import Auth from "@/components/Auth/Auth.jsx";
 import Home from "@/components/home/home.jsx";
 import Courses from "@/components/courses/coursesStudent.jsx";
 import MyCalendar from "@/components/Calendar/Calendar.jsx";
+import Exam from "@/components/Exam/Exam.jsx";
 
 function App() {
 
@@ -22,7 +23,10 @@ function App() {
 			} />
             <Route path="/calendar" element={
                 <MyCalendar />
-            }/>
+            } />
+			  <Route path="/exams" element={
+				<Exam />
+			} />
             <Route path="*" element={
                 <Navigate to="/auth"/>
             }/>

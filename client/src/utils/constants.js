@@ -1,4 +1,4 @@
-export const HOST = 'http://localhost:3300';
+export const HOST = 'https://ischool-production.up.railway.app';
 
 export const AUTH_ROUTE = "api/author";
 export const LOGIN_ROUTE = `${AUTH_ROUTE}/login`;
