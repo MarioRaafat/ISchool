@@ -79,17 +79,20 @@ const MyCalendar = () => {
                 }).slice(0, 3); // remove slice to show all courses when you change the date
                 setInitialEvents(events);
             }
-
-            const recurringEvents = initialEvents.flatMap((event) =>
-                generateWeeklyEvents(event.title, event.start, event.end, 10)
-            );
-            setEvents(recurringEvents);
-        }
+        };
         if (userInfo) {
             fetchingCourses();
         }
 
     }, [userInfo]);
+
+
+    useEffect(() => {
+        const recurringEvents = initialEvents.flatMap((event) =>
+            generateWeeklyEvents(event.title, event.start, event.end, 10)
+        );
+        setEvents(recurringEvents);
+    }, [initialEvents]);
 
     const eventStyleGetter = (event) => {
         const style = {
