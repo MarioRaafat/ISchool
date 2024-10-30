@@ -61,22 +61,22 @@ const MyCalendar = () => {
             const response = await apiClient.post(COURSES_ROUTE, {classId: userInfo.classId},{withCredentials: true});
             if (response.status === 200 && response.data) {
                 const courses = response.data;
-                const events = courses.map((course) => {
-                    const targetDayIndex = weekDays.indexOf(course.day);
-                    const dayDifference = (targetDayIndex - startDayIndex + 7) % 7 || 7;
-                    let courseStartDateBegin = new Date(schoolStartDate);
-                    let courseStartDateEnd = new Date(schoolStartDate);
-                    courseStartDateBegin.setDate(schoolStartDate.getDate() + dayDifference);
-                    courseStartDateEnd.setDate(schoolStartDate.getDate() + dayDifference);
-                    courseStartDateBegin.setHours(course.startTime.split(" ")[0].split(":")[0], course.startTime.split(" ")[0].split(":")[1]);
-                    courseStartDateEnd.setHours(course.endTime.split(" ")[0].split(":")[0], course.endTime.split(" ")[0].split(":")[1]);
-                    return {
-                        title: course.name,
-                        start: courseStartDateBegin,
-                        end: courseStartDateEnd,
-                        allDay: false,
-                    };
-                }).slice(0, 3); // remove slice to show all courses when you change the date
+				const events = courses.map((course) => {
+					const targetDayIndex = weekDays.indexOf(course.day);
+					const dayDifference = (targetDayIndex - startDayIndex + 7) % 7 || 7;
+					let courseStartDateBegin = new Date(schoolStartDate);
+					let courseStartDateEnd = new Date(schoolStartDate);
+					courseStartDateBegin.setDate(schoolStartDate.getDate() + dayDifference);
+					courseStartDateEnd.setDate(schoolStartDate.getDate() + dayDifference);
+					courseStartDateBegin.setHours(course.startTime.split(" ")[0].split(":")[0], course.startTime.split(" ")[0].split(":")[1]);
+					courseStartDateEnd.setHours(course.endTime.split(" ")[0].split(":")[0], course.endTime.split(" ")[0].split(":")[1]);
+					return {
+						title: course.name,
+						start: courseStartDateBegin,
+						end: courseStartDateEnd,
+						allDay: false,
+					};
+				});
                 setInitialEvents(events);
             }
         };

@@ -31,7 +31,7 @@ const CurrentExams = () => {
     const formData = new FormData();
     formData.append('file', file);
 
-    try {
+	  try {
       const response = await apiClient.post(EXAM_CREATE, formData); // Upload file
 
       if (!response.ok) {

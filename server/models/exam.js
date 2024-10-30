@@ -13,7 +13,9 @@ export default (sequelize, DataTypes) => {
 		maxGrade: DataTypes.INTEGER,
 		description: DataTypes.TEXT,
 		teacher_id: DataTypes.UUID,
-		class_id: DataTypes.UUID
+		class_id: DataTypes.UUID,
+		filePath: DataTypes.STRING
+
 	}, {});
 	Exam.associate = function (models) {
 		Exam.belongsTo(models.Teacher, { foreignKey: 'teacher_id', as: 'Teacher' });
