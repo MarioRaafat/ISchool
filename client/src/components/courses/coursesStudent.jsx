@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import SideBarStudent from "../SideBar/sideBarStudent";
 import Modal from "../ui/Modal";
 import { apiClient } from "@/lib/apiClient.js";
-import {COURSES_ROUTE} from "@/utils/constants.js";
+import {COURSES_STUDENT_ROUTE} from "@/utils/constants.js";
 import { format } from "date-fns";
 
 const courses = [
@@ -33,11 +33,16 @@ const CoursesStudent = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-      apiClient.post(COURSES_ROUTE, {classId}).then((response) => {
-		  setCourseList(response.data);
-
-      });
-  }, []);
+      const fetchingCourses = async () => {
+        const response = await apiClient.post(COURSES_STUDENT_ROUTE, {classId});
+        if (response.status === 200 && response.data) {
+          setCourseList(response.data);
+        }
+      }
+      if (userInfo) {
+        fetchingCourses();
+      }
+    }, [userInfo]);
 
   const handleCardClick = (course) => {
     setSelectedCourse(course);
@@ -75,7 +80,7 @@ const CoursesStudent = () => {
                   index % 2 ? "text-gray-600" : "text-neutral-300"
                 } text-sm`}
 				  >
-                {formatTime(course.time)}
+                {course.day}
               </p>
             </div>
           ))}
@@ -86,9 +91,9 @@ const CoursesStudent = () => {
         {selectedCourse && (
           <div>
 					  <h2 className="text-2xl font-bold mb-4">{selectedCourse.name}</h2>
+                      <p className="text-gray-600 mb-4">Day: {selectedCourse.day}</p>
 					  <p className="text-gray-600 mb-4">Starts: {selectedCourse.startTime}</p>
 					  <p className="text-gray-600 mb-4">Ends: {selectedCourse.endTime}</p>
-            <p className="text-gray-600 mb-4">{formatTime(selectedCourse.time)}</p>
             <p>{selectedCourse.description}</p>
 			
           </div>

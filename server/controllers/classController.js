@@ -1,6 +1,6 @@
 import models from '../models/index.js';
 
-const { Class, Subject, ClassSubjects, Grade } = models;
+const { Class, Subject, ClassSubjects, Grade, Teacher, ClassTeachers} = models;
 
 // Create class
 export const createClass = async (req, res) => {
@@ -71,7 +71,7 @@ export const addSubjectToClass = async (req, res) => {
 };
 
 // Get subjects by class
-export const getSubjectsByClass = async (req, res) => {
+export const getStudentSubjects = async (req, res) => {
 	const { classId } = req.body;
 	try {
 		const classInstance = await Class.findByPk(classId);
@@ -91,6 +91,27 @@ export const getSubjectsByClass = async (req, res) => {
 		res.status(500).json({ message: 'An error occurred', error });
 	}
 };
+
+export const getTeacherSubjects = async (req, res) => {
+	// const { teacherId } = req.body;
+	// try {
+	// 	const teacher = await Teacher.findByPk(teacherId);
+	// 	if (!teacher) {
+	// 		return res.status(404).json({ message: 'Teacher not found' });
+	// 	}
+	// 	const classes = await teacher.getClasses({
+	// 		through: {
+	// 			model: ClassTeachers,
+	// 			attributes: ['id', 'name']
+	// 		}
+	// 	});
+	//
+	//
+	// 	res.status(200).json(subjects);
+	// } catch (error) {
+	// 	res.status(500).json({ message: 'An error occurred', error });
+	// }
+}
 
 export const getUpcomingCourses = async (req, res) => {
 	const { classId } = req.body;

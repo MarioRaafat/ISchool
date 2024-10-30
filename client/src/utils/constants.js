@@ -10,7 +10,7 @@ export const LOGOUT_ROUTE = `${AUTH_ROUTE}/logout`;
 
 
 export const CLASS_ROUTE = "api/class";
-export const COURSES_ROUTE = `${CLASS_ROUTE}/courses`;
+export const COURSES_STUDENT_ROUTE = `${CLASS_ROUTE}/student/courses`;
 export const CLASS_UPCOMING_COURSES = `${CLASS_ROUTE}/upcomingCourses`;
 
 export const EXAM_ROUTE = "api/exam";

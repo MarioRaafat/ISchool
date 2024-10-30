@@ -1,19 +1,36 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router';
 import Modal from '../../ui/Modal'; // Import the Modal component
+import {useAppstore} from "../../../../store/index.js";
+import {apiClient} from "@/lib/apiClient.js";
+import {UPCOMING_EXAMS} from "@/utils/constants.js"
 
-const exams = [
-  { date: "2024-10-05", name: "Introduction to iSchool", description: "Final exam for you", startTime: "10:00", endTime: "12:00" },
-  { date: "2024-10-06", name: "Mathematics", description: "1 of 12 sessions, Mr. Johnson", startTime: "13:00", endTime: "15:00" },
-  { date: "2024-10-07", name: "Team meeting", description: "1 of 20 meetings, Design Team", startTime: "12:00", endTime: "13:00" },
-  { date: "2024-10-08", name: "Assignment 1", description: "1 of 2, Due on Friday", startTime: "16:00", endTime: "16:30" },
-  { date: "2024-10-09", name: "Exam 1", description: "2 of 2, Due on Monday", startTime: "16:00", endTime: "16:30" },
-];
+// const exams = [
+//   { date: "2024-10-05", name: "Introduction to iSchool", description: "Final exam for you", startTime: "10:00", endTime: "12:00" },
+//   { date: "2024-10-06", name: "Mathematics", description: "1 of 12 sessions, Mr. Johnson", startTime: "13:00", endTime: "15:00" },
+//   { date: "2024-10-07", name: "Team meeting", description: "1 of 20 meetings, Design Team", startTime: "12:00", endTime: "13:00" },
+//   { date: "2024-10-08", name: "Assignment 1", description: "1 of 2, Due on Friday", startTime: "16:00", endTime: "16:30" },
+//   { date: "2024-10-09", name: "Exam 1", description: "2 of 2, Due on Monday", startTime: "16:00", endTime: "16:30" },
+// ];
 
 const UpcomingExams = () => {
   const navigate = useNavigate();
+  const {userInfo} = useAppstore();
   const [selectedExam, setSelectedExam] = useState(null); // State to manage the selected exam
+  const [exams, setExams] = useState([]);
+
+    useEffect(() => {
+        const fetchUpcomingExams = async () => {
+            const response = await apiClient.post(UPCOMING_EXAMS, { studentId: userInfo.id });
+            if (response.status === 200) {
+                setExams((await response).data);
+            };
+        };
+        if (userInfo) {
+            fetchUpcomingExams();
+        }
+    }, [userInfo, exams]);
 
   const handleNavigate = () => {
     navigate('/calendar');

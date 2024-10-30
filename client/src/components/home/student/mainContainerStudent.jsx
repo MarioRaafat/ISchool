@@ -16,7 +16,7 @@ const MainContainerStudent = () => {
         const fetchUpcomingExams = async () => {
             const response = await apiClient.post(UPCOMING_EXAMS, {studentId: userInfo.id}, {withCredentials: true});
             if (response.status === 200) {
-                setNextExams(response.data);
+                setNextExams(response.data.slice(0,3));
             }
         }
         if (userInfo.id) {

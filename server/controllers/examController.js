@@ -192,13 +192,14 @@ export const getUpcomingExams = async (req, res) => {
 				return {
 					name: exam.name,
 					date,
+					description: exam.description,
+					maxGrade: exam.maxGrade,
 					startTime: `${startHours}:${startMinutes} ${startPeriod}`,
 					endTime: `${endHours}:${endMinutes} ${endPeriod}`,
 					examDate: exam.startDate
 				};
 			})
 			.sort((a, b) => a.examDate - b.examDate) // ascending
-			.slice(0, 3);
 
 		res.status(200).json(nextExams);
 	} catch (error) {

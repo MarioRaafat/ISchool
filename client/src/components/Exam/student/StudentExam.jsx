@@ -2,8 +2,41 @@ import React from 'react';
 import CurrentExams from './CurrentExams';
 import UpcomingExams from './UpcomingExams';
 import ProgressCircle from './ProgressCircle';
+import { useState, useEffect } from 'react';
+import {apiClient} from "@/lib/apiClient.js";
+import {useAppstore} from "../../../../store/index.js";
+import {RESULTS_STUDENT} from "@/utils/constants.js";
 
 const StudentExam = () => {
+
+    const [results, setResults] = useState([]);
+    const [lastExam, setLastExam] = useState(0);
+    const {userInfo} = useAppstore();
+    const [average, setAverage] = useState(0);
+
+    useEffect(() => {
+        const fetchResults = async () => {
+            try {
+                const response = await apiClient.post(RESULTS_STUDENT, {studentId: userInfo.id});
+                if (response.status === 200) {
+                    const data = response.data;
+                    const totalGrades = data.reduce((acc, result) => acc + result.grade, 0);
+                    const totalMaxGrade = data.reduce((acc, result) => acc + result.maxGrade, 0);
+                    const average = (totalGrades / totalMaxGrade * 100).toFixed(1);
+
+                    setLastExam((data[0].grade / data[0].maxGrade * 100).toFixed(1));
+                    setAverage(average);
+                    setResults(data);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+        if (userInfo) {
+            fetchResults();
+        }
+    }, [userInfo]);
+
   return (
     <div className="flex-1 w-full p-8 bg-gray-100 min-h-screen overflow-y-auto">
       <header className="mb-8">
@@ -12,9 +45,9 @@ const StudentExam = () => {
       </header>
 
       <section className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <ProgressCircle progress={70} className="rounded-full" />
-        <ProgressCircle progress={95} className="rounded-full" />
-        <ProgressCircle progress={40} className="rounded-full" />
+        <ProgressCircle progress={lastExam} description={"Last Exam Percentage"} className="rounded-full" />
+        <ProgressCircle progress={average} description={"Average Score this Semester"} className="rounded-full" />
+        <ProgressCircle progress={100} description={"Put here Upcoming Exam but in your style"} className="rounded-full" />
       </section>
 
       {/* Current Exams Section */}

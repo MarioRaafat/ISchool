@@ -24,8 +24,6 @@ export const getResultsByStudent = async (req, res) => {
 
 export const getResultsByTeacher = async (req, res) => {};
 
-export const getAverageResultsByStudent = async (req, res) => {};
-
 export const getRankByStudent = async (req, res) => {
     const { studentId, classId } = req.body;
     try {
@@ -52,4 +50,6 @@ export const getRankByStudent = async (req, res) => {
 };
 
 export const getAverageResultsByTeacher = async (req, res) => {};
+
+export const getAverageResultsByStudent = async (req, res) => {};
 
