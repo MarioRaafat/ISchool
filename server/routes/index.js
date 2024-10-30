@@ -5,6 +5,7 @@ import teacherRouter from './teacherRouter.js';
 import gradeRouter from './gradeRouter.js';
 import classRouter from './classRouter.js';
 import assignmentRouter from './assignmentRouter.js';
+import resultsRouter from './resultsRouter.js';
 
 const router = express.Router();
 
@@ -14,6 +15,7 @@ router.use('/student', studentRouter);
 router.use('/class', classRouter);
 router.use('/assignment', assignmentRouter);
 router.use('/exam', examRouter);
+router.use('/results', resultsRouter);
 
 
 export default router;

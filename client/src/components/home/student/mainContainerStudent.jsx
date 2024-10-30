@@ -2,15 +2,15 @@ import {useAppstore} from "../../../../store/index.js";
 import StudentHeader from "@/components/home/student/studentHeader.jsx";
 import {useEffect, useState} from "react";
 import {apiClient} from "@/lib/apiClient.js";
-import {CLASS_UPCOMING_COURSES, UPCOMING_EXAMS} from "@/utils/constants.js";
+import {CLASS_UPCOMING_COURSES, RESULTS_STUDENT, RESULTS_STUDENT_RANK, UPCOMING_EXAMS} from "@/utils/constants.js";
 
 const MainContainerStudent = () => {
     const { userInfo } = useAppstore();
     const [nextExams, setNextExams] = useState([]);
     const [nextCourses, setNextCourses] = useState([]);
-    const examResults = [9 , 8, 7, 6, 10, 8, 9, 7, 10];
-    const averageGrade = 82.2;
-    const rank = 3;
+    const [lastResults, setLastResults] = useState([]);
+    const [averageGrade, setAverageGrade] = useState(0);
+    const [rank, setRank] = useState(0);
 
     useEffect(() => {
         const fetchUpcomingExams = async () => {
@@ -36,10 +36,43 @@ const MainContainerStudent = () => {
                 console.error(error);
             }
         }
+
+        const fetchLastResults = async () => {
+            const response = await apiClient.post(RESULTS_STUDENT, {studentId: userInfo.id});
+            if (response.status === 200) {
+                const totalGrades = response.data.reduce((acc, result) => acc + result.grade, 0);
+                const totalMaxGrades = response.data.reduce((acc, result) => acc + result.maxGrade, 0);
+                const results = response.data.map(result => (result.grade.toString() + "/" + result.maxGrade.toString()));
+                const avg = (totalGrades / totalMaxGrades * 100).toFixed(2);
+                setAverageGrade(avg);
+                setLastResults(results);
+            }
+        }
+
         if (userInfo.classId) {
             fetchUpcomingCourses();
+            fetchLastResults();
         }
-    },[nextCourses, userInfo]);
+    },[nextCourses, userInfo, lastResults]);
+
+    useEffect(() => {
+        const fetchRank = async () => {
+            try {
+                const response = await apiClient.post(RESULTS_STUDENT_RANK, {studentId: userInfo.id, classId: userInfo.classId});
+                console.log(response.data);
+                if (response.status === 200) {
+                    setRank(response.data.studentRank);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        }
+
+        if (userInfo) {
+            fetchRank();
+        }
+    }, [userInfo, rank]);
+
 
     return (
         <div className="bg-gray-100 mx-auto w-full">
@@ -49,7 +82,7 @@ const MainContainerStudent = () => {
                 <div className="grid grid-cols-3 gap-4">
                     <div className="bg-[#decef2] p-4 rounded-3xl shadow-md flex flex-col items-center
                             transition-all hover:scale-105 hover:translate-y-1.5 shadow-l">
-                        <p className="text-2xl font-bold text-gray-800">{examResults[0]}</p>
+                        <p className="text-2xl font-bold text-gray-800">{lastResults[0]}</p>
                         <p className="text-gray-600 text-sm">Last Exam Result</p>
                     </div>
                     <div className="bg-purple-800 p-4 rounded-3xl shadow-md flex flex-col items-center

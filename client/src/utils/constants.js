@@ -22,4 +22,13 @@ export const EXAM_GET_ALL_ROUTE = `${EXAM_ROUTE}/get-all`;
 export const EXAM_TEACHER = `${EXAM_ROUTE}/teacher`;
 export const EXAM_STUDENT = `${EXAM_ROUTE}/student`;
 export const UPCOMING_EXAMS = `${EXAM_ROUTE}/upcomingExams`;
+export const LAST_EXAMS = `${EXAM_ROUTE}/lastExams`;
 export const EXAM_CREATE = `${EXAM_ROUTE}/create`;
+
+
+export const RESULTS_ROUTE = "api/results";
+export const RESULTS_STUDENT = `${RESULTS_ROUTE}/student`;
+export const RESULTS_TEACHER = `${RESULTS_ROUTE}/teacher`;
+export const RESULTS_STUDENT_AVERAGE = `${RESULTS_ROUTE}/student/average`;
+export const RESULTS_STUDENT_RANK = `${RESULTS_ROUTE}/student/rank`;
+export const RESULTS_TEACHER_AVERAGE = `${RESULTS_ROUTE}/teacher/average`;

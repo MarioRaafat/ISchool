@@ -68,15 +68,25 @@ const MyCalendar = () => {
                     let courseStartDateEnd = new Date(schoolStartDate);
                     courseStartDateBegin.setDate(schoolStartDate.getDate() + dayDifference);
                     courseStartDateEnd.setDate(schoolStartDate.getDate() + dayDifference);
-                    courseStartDateBegin.setHours(course.startTime.split(" ")[0].split(":")[0], course.startTime.split(" ")[0].split(":")[1]);
-                    courseStartDateEnd.setHours(course.endTime.split(" ")[0].split(":")[0], course.endTime.split(" ")[0].split(":")[1]);
+                    let [startHour, startMinute] = course.startTime.split(" ")[0].split(":");
+                    let [endHour, endMinute] = course.endTime.split(" ")[0].split(":");
+                    const startPeriod = course.startTime.split(" ")[1];
+                    const endPeriod = course.endTime.split(" ")[1];
+                    if (startPeriod === "PM" && startHour !== "12") {
+                        startHour = String(Number(startHour) + 12);
+                    }
+                    if (endPeriod === "PM" && endHour !== "12") {
+                        endHour = String(Number(endHour) + 12);
+                    }
+                    courseStartDateBegin.setHours(startHour, startMinute);
+                    courseStartDateEnd.setHours(endHour, endMinute);
                     return {
                         title: course.name,
                         start: courseStartDateBegin,
                         end: courseStartDateEnd,
                         allDay: false,
                     };
-                }).slice(0, 3); // remove slice to show all courses when you change the date
+                });
                 setInitialEvents(events);
             }
         };
@@ -120,7 +130,7 @@ const MyCalendar = () => {
     const CalendarHeader = ({ label, onNavigate, onView, view }) => {
         return (
             <div className="calendar-header flex flex-col px-4 py-2">
-                <h2 className="text-3xl font-semibold">{label}</h2>
+                <h2 className="text-3xl font-semibold pl-9 sm:pl-7 md:pl-4 lg:pl-0">{label}</h2>
                 <div className="flex justify-between items-center px-4 py-2 w-full">
                     <div className="navigation-buttons flex space-x-2">
                         <button className={"text-[20px] font-bold"} onClick={() => onNavigate("PREV")}>&lt;</button>
@@ -192,7 +202,7 @@ const MyCalendar = () => {
                 userInfo.type === "student" ? (
                     <div className="flex h-screen w-screen overflow-x-hidden">
                         <SideBarStudent />
-                        <CalendarComponent />
+                        <CalendarComponent/>
                     </div>
                 ) : (
                     <div className="flex h-screen w-screen overflow-x-hidden">

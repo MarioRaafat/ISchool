@@ -8,7 +8,8 @@ import {
     deleteExam,
     getExamsByTeacher,
     getExamsByStudent,
-    getUpcomingExams
+    getUpcomingExams,
+    getLastExams,
 } from '../controllers/examController.js';
 import multer from "multer";
 
@@ -20,6 +21,7 @@ router.get('/', getAllExams);
 router.get('/teacher/:teacherId', getExamsByTeacher);
 router.get('/student/:studentId', getExamsByStudent);
 router.post('/upcomingExams', getUpcomingExams);
+router.post('/lastExams', getLastExams);
 router.get('/:id', getExamById);
 router.put('/:id', upload.single('file'), updateExam);
 router.delete('/delete/:id', deleteExam);

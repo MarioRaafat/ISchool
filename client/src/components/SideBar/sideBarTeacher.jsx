@@ -26,7 +26,7 @@ const SideBarTeacher = () => {
     });
 
     return (
-        <>
+        <div className="z-50">
             {isMobile && !isSidebarOpen && (
                 <div className="fixed duration-300 transition-all ease-in-out p-3">
                     <RiMenu2Line
@@ -162,7 +162,7 @@ const SideBarTeacher = () => {
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     )
 }
 

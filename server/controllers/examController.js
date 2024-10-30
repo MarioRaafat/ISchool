@@ -207,5 +207,38 @@ export const getUpcomingExams = async (req, res) => {
 	}
 }
 
+export const getLastExams = async (req, res) => {
+	const { classId } = req.body;
+	const now = new Date();
+	try {
+		const exams = await Exam.findAll({ where: { class_id: classId } });
+		const lastExams = exams
+			.filter(exam => exam.endDate < now)
+			.map(exam => {
+				const date = exam.startDate.toString().slice(0, 10);
+				let [startHours, startMinutes] = exam.startDate.toString().slice(16, 21).split(':');
+				let [endHours, endMinutes] = exam.endDate.toString().slice(16, 21).split(':');
+				const startPeriod = startHours >= 12 ? 'PM' : 'AM';
+				const endPeriod = endHours >= 12 ? 'PM' : 'AM';
+				startHours = startHours % 12;
+				endHours = endHours % 12;
+
+				return {
+					name: exam.name,
+					date,
+					startTime: `${startHours}:${startMinutes} ${startPeriod}`,
+					endTime: `${endHours}:${endMinutes} ${endPeriod}`,
+					examDate: exam.startDate
+				};
+			})
+			.sort((a, b) => b.examDate - a.examDate) // descending
+
+		res.status(200).json(lastExams);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error fetching exams' });
+	}
+}
+
 
 export { upload };
