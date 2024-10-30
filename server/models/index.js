@@ -9,6 +9,7 @@ import Assignment from './assignment.js';
 import Exam from './exam.js';
 import Result from './result.js';
 import ClassSubjects from './class_subjects.js';
+import ClassTeachers from './class_teachers.js';
 
 dotenv.config();
 
@@ -28,6 +29,7 @@ const models = {
 	Exam: Exam(sequelize, DataTypes),
 	Result: Result(sequelize, DataTypes),
 	ClassSubjects: ClassSubjects(sequelize, DataTypes),
+	ClassTeachers: ClassTeachers(sequelize, DataTypes),
 };
 
 Object.keys(models).forEach((modelName) => {

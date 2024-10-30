@@ -41,6 +41,8 @@ export default (sequelize, DataTypes) => {
 	Student.associate = function (models) {
 		Student.belongsTo(models.Class, { foreignKey: 'class_id', as: 'Class' });
 		Student.belongsTo(models.Grade, { foreignKey: 'grade_id', as: 'Grade' });
+		Student.hasMany(models.Result, { foreignKey: 'student_id', as: 'Results' }); // Add this line
+
 	};
 	return Student;
 };
