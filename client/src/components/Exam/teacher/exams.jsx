@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import Modal from "../../ui/Modal";
+import {EXAM_CREATE, EXAM_DELETE_ROUTE, EXAM_ROUTE, EXAM_TEACHER} from "@/utils/constants.js";
+import {apiClient} from "@/lib/apiClient.js";
 
 const examsData = [
   { id: 1, name: 'Mathematics', description: 'Final exam for Mathematics.', date: '2024-10-29', startTime: '10:00', endTime: '12:00', examPath: 'https://www.google.com', day: 'today' },
@@ -30,14 +32,7 @@ const CurrentExams = () => {
     formData.append('file', file);
 
     try {
-      // a7a 3lek ya 7abibi :D
-      // ystaaaaaaaaaaaaa
-      // ana ktabt "a7a" l2et copilot 3mlha bel4kl da
-      // remove the path from the fetch and replace it with the something from constant file which is the server url (from .env)
-      const response = await fetch('https://ischool-production.up.railway.app/api/exam', {
-        method: 'POST',
-        body: formData,
-      });
+      const response = await apiClient.post(EXAM_CREATE, formData); // Upload file
 
       if (!response.ok) {
         throw new Error('Upload failed');

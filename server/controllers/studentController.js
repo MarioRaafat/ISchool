@@ -1,6 +1,6 @@
 import models from '../models/index.js';
 
-const { Student, Class, Grade } = models;
+const { Student, Class, Grade, Result } = models;
 
 
 
@@ -55,6 +55,23 @@ export const createStudent = async (req, res) => {
 	} catch (error) {
 		console.log(error);
 		res.status(500).json({ message: 'Error creating student' });
+	}
+};
+
+// Get all results for a student by id
+export const getStudentResults = async (req, res) => {
+	try {
+		const student = await Student.findByPk(req.params.id, {
+			include: [{ model: models.Result, as: 'Results' }]
+		});
+		if (student) {
+			res.status(200).json(student.Results);
+		} else {
+			res.status(404).json({ message: 'Student not found' });
+		}
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error getting student results' });
 	}
 };
 
