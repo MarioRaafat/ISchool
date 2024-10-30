@@ -14,16 +14,26 @@ export const COURSES_STUDENT_ROUTE = `${CLASS_ROUTE}/student/courses`;
 export const CLASS_UPCOMING_COURSES = `${CLASS_ROUTE}/upcomingCourses`;
 
 export const EXAM_ROUTE = "api/exam";
-export const EXAM_UPLOAD_ROUTE = `${EXAM_ROUTE}/upload`;
+export const EXAM_CREATE = `${EXAM_ROUTE}/create`;
+export const EXAM_UPLOAD_ROUTE = `${EXAM_ROUTE}/upload`; // to do in the future
 export const EXAM_DELETE_ROUTE = `${EXAM_ROUTE}/delete`;
 export const EXAM_UPDATE_ROUTE = `${EXAM_ROUTE}/update`;
-export const EXAM_GET_ROUTE = `${EXAM_ROUTE}/get`;
 export const EXAM_GET_ALL_ROUTE = `${EXAM_ROUTE}/get-all`;
 export const EXAM_TEACHER = `${EXAM_ROUTE}/teacher`;
 export const EXAM_STUDENT = `${EXAM_ROUTE}/student`;
-export const UPCOMING_EXAMS = `${EXAM_ROUTE}/upcomingExams`;
-export const LAST_EXAMS = `${EXAM_ROUTE}/lastExams`;
-export const EXAM_CREATE = `${EXAM_ROUTE}/create`;
+export const UPCOMING_EXAMS = `${EXAM_ROUTE}/upcoming`;
+export const LAST_EXAMS = `${EXAM_ROUTE}/last`;
+
+export const ASSIGNMENT_ROUTE = "api/assignment";
+export const ASSIGNMENT_CREATE = `${ASSIGNMENT_ROUTE}/create`;
+export const ASSIGNMENT_UPLOAD_ROUTE = `${ASSIGNMENT_ROUTE}/upload`; // to do in the future
+export const ASSIGNMENT_DELETE_ROUTE = `${ASSIGNMENT_ROUTE}/delete`;
+export const ASSIGNMENT_UPDATE_ROUTE = `${ASSIGNMENT_ROUTE}/update`;
+export const ASSIGNMENT_GET_ALL_ROUTE = `${ASSIGNMENT_ROUTE}/get-all`;
+export const ASSIGNMENT_TEACHER = `${ASSIGNMENT_ROUTE}/teacher`;
+export const ASSIGNMENT_STUDENT = `${ASSIGNMENT_ROUTE}/student`;
+export const UPCOMING_ASSIGNMENTS = `${ASSIGNMENT_ROUTE}/upcoming`;
+export const LAST_ASSIGNMENTS = `${ASSIGNMENT_ROUTE}/last`;
 
 
 export const RESULTS_ROUTE = "api/results";

@@ -24,7 +24,7 @@ const UpcomingExams = () => {
         const fetchUpcomingExams = async () => {
             const response = await apiClient.post(UPCOMING_EXAMS, { studentId: userInfo.id });
             if (response.status === 200) {
-                setExams((await response).data);
+                setExams(await response.data);
             };
         };
         if (userInfo) {
@@ -88,7 +88,7 @@ const UpcomingExams = () => {
 
       {/* Modal for exam details */}
       {selectedExam && (
-        <Modal isOpen={selectedExam !== null} onClose={handleCloseModal}>
+        <Modal isOpen={selectedExam} onClose={handleCloseModal}>
           <div className="text-gray-800">
             <h2 className="text-xl font-semibold mb-4">{selectedExam.name}</h2>
             <p className="text-gray-600">Description: {selectedExam.description}</p>

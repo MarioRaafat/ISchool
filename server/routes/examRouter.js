@@ -17,13 +17,13 @@ const router = express.Router();
 const upload = multer({dest: "uploads/files/exams"});
 
 router.post('/create', upload.single('file'), createExam);
-router.get('/', getAllExams);
+router.get('/get-all', getAllExams);
 router.get('/teacher/:teacherId', getExamsByTeacher);
 router.get('/student/:studentId', getExamsByStudent);
-router.post('/upcomingExams', getUpcomingExams);
-router.post('/lastExams', getLastExams);
+router.post('/upcoming', getUpcomingExams);
+router.post('/last', getLastExams);
 router.get('/:id', getExamById);
-router.put('/:id', upload.single('file'), updateExam);
+router.put('/update/:id', upload.single('file'), updateExam);
 router.delete('/delete/:id', deleteExam);
 
 export default router;

@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import multer from 'multer';
 
-const { Assignment } = models;
+const { Assignment, Student, Teacher } = models;
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -97,5 +97,129 @@ export const deleteAssignment = async (req, res) => {
 		res.status(500).json({ message: 'Error deleting assignment' });
 	}
 };
+
+
+export const getAssignmentsByStudent = async (req, res) => {
+	const { studentId } = req.params;
+	try {
+		const student = await Student.findByPk(studentId);
+		if (!student) {
+			return res.status(404).json({ message: 'Student not found' });
+		}
+		const classId = student.class_id;
+		const assignments = await Assignment.findAll({ where: { class_id: classId } });
+		const filteredAssignments = assignments.map(assignment => ({
+			id: assignment.id,
+			name: assignment.name,
+			description: assignment.description,
+			date: assignment.startDate.toString().slice(0, 10),
+			startTime: assignment.startDate.toString().slice(16, 21),
+			endTime: assignment.endDate.toString().slice(16, 21),
+			maxGrade: assignment.maxGrade,
+			file: assignment.filePath,
+		}));
+
+		res.status(200).json(filteredAssignments);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error fetching assignments' });
+	}
+};
+
+export const getAssignmentsByTeacher = async (req, res) => {
+	const { teacherId } = req.params;
+	try {
+		const assignments = await Assignment.findAll({ where: { teacher_id: teacherId } });
+		const filteredAssignments = assignments.map(assignment => ({
+			id: assignment.id,
+			name: assignment.name,
+			description: assignment.description,
+			date: assignment.startDate.toString().slice(0, 10),
+			startTime: assignment.startDate.toString().slice(16, 21),
+			endTime: assignment.endDate.toString().slice(16, 21),
+			maxGrade: assignment.maxGrade,
+			file: assignment.filePath,
+		}));
+
+		res.status(200).json(filteredAssignments);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error fetching assignments' });
+	}
+};
+
+export const getUpcomingAssignments = async (req, res) => {
+	const { studentId } = req.body;
+	const now = new Date();
+	try {
+		const student = await Student.findByPk(studentId);
+		if (!student) {
+			return res.status(404).json({ message: 'Student not found' });
+		}
+		const classId = student.class_id;
+		const assignments = await Assignment.findAll({ where: { class_id: classId } });
+		const nextAssignments = assignments
+			//.filter(assignment => assignment.startDate >= now)
+			.map(assignment => {
+				const date = assignment.startDate.toString().slice(0, 10);
+				let [startHours, startMinutes] = assignment.startDate.toString().slice(16, 21).split(':');
+				let [endHours, endMinutes] = assignment.endDate.toString().slice(16, 21).split(':');
+				const startPeriod = startHours >= 12 ? 'PM' : 'AM';
+				const endPeriod = endHours >= 12 ? 'PM' : 'AM';
+				startHours = startHours % 12;
+				endHours = endHours % 12;
+
+				return {
+					name: assignment.name,
+					date,
+					description: assignment.description,
+					maxGrade: assignment.maxGrade,
+					startTime: `${startHours}:${startMinutes} ${startPeriod}`,
+					endTime: `${endHours}:${endMinutes} ${endPeriod}`,
+					assignmentDate: assignment.startDate
+				};
+			})
+			.sort((a, b) => a.assignmentDate - b.assignmentDate) // ascending
+
+
+		res.status(200).json(nextAssignments);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error fetching assignments' });
+	}
+}
+
+export const getLastAssignments = async (req, res) => {
+	const { classId } = req.body;
+	const now = new Date();
+	try {
+		const assignments = await Assignment.findAll({ where: { class_id: classId } });
+		const lastAssignments = assignments
+			.filter(assignment => assignment.endDate < now)
+			.map(assignment => {
+				const date = assignment.startDate.toString().slice(0, 10);
+				let [startHours, startMinutes] = assignment.startDate.toString().slice(16, 21).split(':');
+				let [endHours, endMinutes] = assignment.endDate.toString().slice(16, 21).split(':');
+				const startPeriod = startHours >= 12 ? 'PM' : 'AM';
+				const endPeriod = endHours >= 12 ? 'PM' : 'AM';
+				startHours = startHours % 12;
+				endHours = endHours % 12;
+
+				return {
+					name: assignment.name,
+					date,
+					startTime: `${startHours}:${startMinutes} ${startPeriod}`,
+					endTime: `${endHours}:${endMinutes} ${endPeriod}`,
+					assignmentDate: assignment.startDate
+				};
+			})
+			.sort((a, b) => b.assignmentDate - a.assignmentDate) // descending
+
+		res.status(200).json(lastAssignments);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error fetching assignments' });
+	}
+}
 
 export { upload };

@@ -7,7 +7,7 @@ import { useAppstore } from "../../../../store/index.js";
 import {apiClient} from "@/lib/apiClient.js";
 import { useToast } from "@/hooks/use-toast"
 
-const TeacherExam = () => {
+const TeacherAssignments = () => {
   const { toast } = useToast();
   const [exams, setExams] = useState([]);
   const [selectedExam, setSelectedExam] = useState(null);
@@ -355,4 +355,4 @@ const TeacherExam = () => {
   );
 };
 
-export default TeacherExam;
+export default TeacherAssignments;

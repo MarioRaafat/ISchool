@@ -6,6 +6,7 @@ import Courses from "@/components/courses/coursesStudent.jsx";
 import MyCalendar from "@/components/Calendar/Calendar.jsx";
 import Exam from "@/components/Exam/Exam.jsx";
 import Setting from "@/components/Setting/Setting.jsx";
+import Assignment from "@/components/Assignments/Assignment.jsx";
 
 function App() {
 
@@ -25,9 +26,12 @@ function App() {
             <Route path="/calendar" element={
                 <MyCalendar />
             } />
-			  <Route path="/exams" element={
+			<Route path="/exams" element={
 				<Exam />
 			} />
+            <Route path="/assignments" element={
+                <Assignment />
+            } />
             <Route path="/setting" element={
                 <Setting />
             } />
