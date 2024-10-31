@@ -2,14 +2,10 @@
 'use strict';
 export default (sequelize, DataTypes) => {
 	const TeacherSubjects = sequelize.define('TeacherSubjects', {
-		teacher_id: {
-			type: DataTypes.UUID,
-			allowNull: false,
-			references: {
-				model: 'Teachers',
-				key: 'id'
-			},
-			onDelete: 'CASCADE'
+		id: {
+			type: DataTypes.INTEGER,
+			primaryKey: true,
+			autoIncrement: true
 		},
 		subject_id: {
 			type: DataTypes.UUID,
@@ -19,7 +15,16 @@ export default (sequelize, DataTypes) => {
 				key: 'id'
 			},
 			onDelete: 'CASCADE'
-		}
+		},
+		teacher_id: {
+			type: DataTypes.UUID,
+			allowNull: false,
+			references: {
+				model: 'Teachers',
+				key: 'id'
+			},
+			onDelete: 'CASCADE'
+		},
 	}, {
 		timestamps: true
 	});

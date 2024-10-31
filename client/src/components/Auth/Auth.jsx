@@ -38,6 +38,8 @@ const Auth = () => {
                 if (response.status === 200) {
                     toast({ title: "Logged In successfully" });
                     const userData = response.data.user;
+                    const token = response.data.token;
+                    localStorage.setItem("token", token);
                     userData.type = user;
                     setUserInfo(userData);
                     navigate("/home");

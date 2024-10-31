@@ -25,7 +25,7 @@ app.use(cors(corsOptions));
 app.use(cookieParser());
 
 
-app.use('/api/author', authRouter);
+app.use('/api/auth', authRouter);
 app.use('/api', routes);
 
 models.sequelize.sync().then(() => {

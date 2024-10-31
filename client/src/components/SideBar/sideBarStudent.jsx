@@ -7,9 +7,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.jsx"
 import logoPath from "../../assets/logo.png";
 import {useLocation, useNavigate} from 'react-router-dom';
 import {toast} from "@/hooks/use-toast.js";
+import {apiClient} from "@/lib/apiClient.js";
+import {LOGOUT_ROUTE} from "@/utils/constants.js";
 
 const SideBarStudent = () => {
-    const { userInfo } = useAppstore();
+    const { userInfo, setUserInfo } = useAppstore();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const { firstName, lastName, email, image} = userInfo;
@@ -23,6 +25,22 @@ const SideBarStudent = () => {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener('resize', handleResize);
     });
+
+    const Logout = async  () => {
+        try {
+            const response = await apiClient.post(LOGOUT_ROUTE, {}, {withCredentials: true});
+            if (response.status === 200) {
+                setUserInfo(null);
+                localStorage.removeItem("token");
+                toast.success("Logged out successfully");
+                navigate("/author");
+            } else {
+                console.log("Failed to log out");
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div className="z-50">
@@ -162,12 +180,7 @@ const SideBarStudent = () => {
                     <div
                         className={`hover:bg-amber-50 hover:text-red-700 cursor-pointer rounded-full border-2 border-hidden
                         px-2 py-1 flex items-center gap-2 ${isMobile && !isSidebarOpen? "hidden" : null}`}
-                        onClick={
-                            () => {
-                                if(URLPath === "logout") return;
-                                navigate("/logout");
-                            }
-                        }>
+                        onClick={Logout}>
                         <LogOutIcon/> Logout
                     </div>
                 </div>

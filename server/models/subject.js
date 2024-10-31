@@ -11,7 +11,6 @@ export default (sequelize, DataTypes) => {
 		grade_id: DataTypes.UUID,
 		description: DataTypes.TEXT,
 		time: DataTypes.STRING,
-		description: DataTypes.TEXT,
 		startTime: DataTypes.STRING,
 		endTime: DataTypes.STRING,
 		day: DataTypes.STRING
@@ -19,6 +18,7 @@ export default (sequelize, DataTypes) => {
 	Subject.associate = function (models) {
 		Subject.belongsTo(models.Grade, { foreignKey: 'grade_id', as: 'Grade' });
 		Subject.belongsToMany(models.Class, { through: 'class_subjects', as: 'Classes' });
+		Subject.belongsToMany(models.Teacher, { through: 'TeacherSubjects', as: 'Teachers', foreignKey: 'subject_id' });
 	};
 	return Subject;
 };

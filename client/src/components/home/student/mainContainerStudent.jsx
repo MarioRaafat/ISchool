@@ -59,7 +59,6 @@ const MainContainerStudent = () => {
         const fetchRank = async () => {
             try {
                 const response = await apiClient.post(RESULTS_STUDENT_RANK, {studentId: userInfo.id, classId: userInfo.classId});
-                console.log(response.data);
                 if (response.status === 200) {
                     setRank(response.data.studentRank);
                 }

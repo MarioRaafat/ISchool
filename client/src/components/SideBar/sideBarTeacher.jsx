@@ -8,9 +8,11 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.jsx"
 import logoPath from "../../assets/logo.png";
 import {useLocation, useNavigate} from 'react-router-dom';
 import {toast} from "@/hooks/use-toast.js";
+import {apiClient} from "@/lib/apiClient.js";
+import {LOGOUT_ROUTE} from "@/utils/constants.js";
 
 const SideBarTeacher = () => {
-    const { userInfo } = useAppstore();
+    const { userInfo, setUserInfo } = useAppstore();
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
     const { firstName, lastName, email, image} = userInfo;
@@ -24,6 +26,18 @@ const SideBarTeacher = () => {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener('resize', handleResize);
     });
+
+    const Logout = async  () => {
+        const response = await apiClient.post(LOGOUT_ROUTE, {}, {withCredentials: true});
+        if (response.status === 200) {
+            setUserInfo(null);
+            localStorage.removeItem("token");
+            toast.success("Logged out successfully");
+            navigate("/auth");
+        } else {
+            console.log("Failed to log out");
+        }
+    };
 
     return (
         <div className="z-50">
@@ -152,12 +166,7 @@ const SideBarTeacher = () => {
                     <div
                         className={`hover:bg-amber-50 hover:text-red-700 cursor-pointer rounded-full border-2 border-hidden
                         px-2 py-1 flex items-center gap-2 ${isMobile && !isSidebarOpen? "hidden" : null}`}
-                        onClick={
-                            () => {
-                                if(URLPath === "logout") return;
-                                navigate("/logout");
-                            }
-                        }>
+                        onClick={Logout}>
                         <LogOutIcon/> Logout
                     </div>
                 </div>

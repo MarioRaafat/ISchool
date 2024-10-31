@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 const StudentHeader = () => {
     const { userInfo } = useAppstore();
     const { image, firstName, lastName, email } = userInfo;
+    const navigate = useNavigate();
     const studentClass = "1/2";
     const courses = ["Mathematics", "English", "Science", "Physics", "Arabic", "History", "French", "Geography"];
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
@@ -18,6 +19,11 @@ const StudentHeader = () => {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     });
+
+
+    const handleClick = () => {
+        navigate("/setting");
+    }
 
     return (
         <div className="bg-gray-100 p-6 rounded-lg shadow-md mx-auto w-full flex items-center justify-between space-x-4 sm:space-x-6 max-h-36">
@@ -62,7 +68,7 @@ const StudentHeader = () => {
                 </div>
             </div>
 
-            <Button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-full">
+            <Button className="bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2 px-4 sm:px-6 rounded-full" onClick={handleClick}>
                 View Profile
             </Button>
         </div>
