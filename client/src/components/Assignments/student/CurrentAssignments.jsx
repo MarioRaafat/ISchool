@@ -55,7 +55,7 @@ const CurrentAssignments = () => {
 
   return (
     <div className="mb-8 bg-white shadow-lg rounded-2xl p-6">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">Current Exams</h3>
+      <h3 className="text-lg font-semibold mb-4 text-gray-800">Current Assignments</h3>
       <ul className="space-y-4">
         {exams.map((exam) => (
           <li

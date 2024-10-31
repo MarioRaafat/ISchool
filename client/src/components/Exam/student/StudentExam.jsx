@@ -44,14 +44,13 @@ const StudentExam = () => {
         <p className="text-gray-600">Stay organized and productive with iSchool. Keep track of your progress and growth in knowledge.</p>
       </header>
 
-      <section className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <section className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
         <ProgressCircle progress={lastExam} description={"Last Exam Percentage"} className="rounded-full" />
         <ProgressCircle progress={average} description={"Average Score this Semester"} className="rounded-full" />
-        <ProgressCircle progress={100} description={"Put here Upcoming Exam but in your style"} className="rounded-full" />
       </section>
 
       {/* Current Exams Section */}
-      <h2 className="text-3xl font-semibold text-gray-800 my-10">Current Exams</h2>
+      <h2 className="text-3xl font-semibold text-gray-800 my-10 ">Last Exams</h2>
       <CurrentExams />
 
       {/* Upcoming Exams Section */}
