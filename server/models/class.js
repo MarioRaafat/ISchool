@@ -13,8 +13,8 @@ export default (sequelize, DataTypes) => {
 	Class.associate = function (models) {
 		Class.belongsTo(models.Grade, { foreignKey: 'grade_id', as: 'Grade' });
 		Class.hasMany(models.Student, { as: 'Students', foreignKey: 'class_id' });
-		Class.belongsToMany(models.Teacher, { through: 'class_teachers', as: 'Teachers' });
-		Class.belongsToMany(models.Subject, { through: 'class_subjects', as: 'Subjects' });
+		Class.belongsToMany(models.Teacher, { through: 'ClassTeachers', as: 'Teachers', foreignKey: 'class_id' });
+		Class.belongsToMany(models.Subject, { through: 'ClassSubjects', as: 'Subjects', foreignKey: 'class_id', otherKey: 'subject_id' });
 	};
 	return Class;
 };

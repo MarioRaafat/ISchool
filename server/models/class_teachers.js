@@ -1,3 +1,4 @@
+
 // server/models/class_teacher.js
 export default (Sequelize, DataTypes) => {
 	const ClassTeachers = Sequelize.define('ClassTeachers',
@@ -19,7 +20,7 @@ export default (Sequelize, DataTypes) => {
 					key: 'id'
 				},
 				onDelete: 'CASCADE'
-			}
+			},
 		},
 		{
 			timestamps: true

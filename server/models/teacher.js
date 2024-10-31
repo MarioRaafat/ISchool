@@ -36,7 +36,8 @@ export default (sequelize, DataTypes) => {
 		]
 	});
 	Teacher.associate = function (models) {
-		Teacher.belongsToMany(models.Class, { through: 'class_teachers', as: 'Classes' });
+		Teacher.belongsToMany(models.Class, { through: 'ClassTeachers', as: 'Classes', foreignKey: 'teacher_id' });
+		Teacher.belongsToMany(models.Subject, { through: 'TeacherSubjects', as: 'Subjects', foreignKey: 'teacher_id' });
 	};
 	return Teacher;
 };
