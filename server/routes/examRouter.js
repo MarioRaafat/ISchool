@@ -11,6 +11,7 @@ import {
     getUpcomingExams,
     getLastExams,
     getExamResultsByStudent,
+    getAvailableExams,
 } from '../controllers/examController.js';
 import multer from "multer";
 import {verifyToken} from "../middlewares/verifyToken.js";
@@ -21,6 +22,7 @@ const upload = multer({dest: "uploads/files/exams"});
 router.post('/create', verifyToken, upload.single('file'), createExam);
 router.get('/get-all', verifyToken, getAllExams);
 router.get('/teacher/:teacherId', verifyToken, getExamsByTeacher);
+router.get('/teacher/available/:teacherId', verifyToken, getAvailableExams);
 router.get('/student/:studentId', verifyToken, getExamsByStudent);
 router.post('/student/result', verifyToken, getExamResultsByStudent);
 router.post('/upcoming', verifyToken, getUpcomingExams);

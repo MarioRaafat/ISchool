@@ -142,6 +142,29 @@ export const getExamsByTeacher = async (req, res) => {
 	}
 };
 
+export const getAvailableExams = async (req, res) => {
+	const { teacherId } = req.params;
+	try {
+		const exams = await Exam.findAll({ where: { teacher_id: teacherId } });
+		const filteredExams = exams.map(exam => ({
+			id: exam.id,
+			name: exam.name,
+			description: exam.description,
+			date: exam.startDate.toString().slice(0, 10),
+			startTime: exam.startDate.toString().slice(16, 21),
+			endTime: exam.endDate.toString().slice(16, 21),
+			file: exam.filePath,
+		}))
+		.filter(exam => exam.startDate > new Date());
+
+		res.status(200).json(filteredExams);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error fetching exams' });
+	}
+}
+
+
 export const getExamsByStudent = async (req, res) => {
 	const { studentId } = req.params;
 	try {

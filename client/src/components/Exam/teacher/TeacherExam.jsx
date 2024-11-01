@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../ui/Modal';
-import {EXAM_CREATE, EXAM_DELETE_ROUTE, EXAM_ROUTE, EXAM_TEACHER, EXAM_UPDATE_ROUTE} from "@/utils/constants.js";
+import {EXAM_CREATE, EXAM_DELETE_ROUTE, EXAM_ROUTE, EXAM_AVAILABLE, EXAM_TEACHER, EXAM_UPDATE_ROUTE} from "@/utils/constants.js";
 import { v4 as uuidv4 } from 'uuid'; // Import UUID library for generating temporary IDs
-import axios from "axios";
 import { useAppstore } from "../../../../store/index.js";
 import {apiClient} from "@/lib/apiClient.js";
 import { useToast } from "@/hooks/use-toast"
@@ -178,63 +177,6 @@ const TeacherExam = () => {
     }
   };
 
-  const handleSaveAllChanges = async () => {
-    const newExams = exams.filter(exam => exam.status === 'new');
-    const editedExams = exams.filter(exam => exam.status === 'edited');
-
-    try {
-      // Save new exams to the server
-      const newExamPromises = newExams.map(async (exam) => {
-        const formData = new FormData();
-        formData.append('name', exam.name);
-        formData.append('description', exam.description);
-        formData.append('date', exam.date);
-        formData.append('startTime', exam.startTime);
-        formData.append('endTime', exam.endTime);
-        if (exam.file) formData.append('file', exam.file);
-
-        const response = await axios.post('/api/exams', formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-
-        return { ...exam, id: response.data.id, fileUrl: response.data.fileUrl, status: 'synced' };
-      });
-
-      // Save edited exams to the server
-      const editedExamPromises = editedExams.map(async (exam) => {
-        const formData = new FormData();
-        formData.append('name', exam.name);
-        formData.append('description', exam.description);
-        formData.append('date', exam.date);
-        formData.append('startTime', exam.startTime);
-        formData.append('endTime', exam.endTime);
-        if (exam.file) formData.append('file', exam.file);
-
-        const response = await axios.put(`/api/exams/${exam.id}`, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
-        });
-
-        return { ...exam, fileUrl: response.data.fileUrl, status: 'synced' };
-      });
-
-      // Await all server operations to complete
-      const updatedNewExams = await Promise.all(newExamPromises);
-      const updatedEditedExams = await Promise.all(editedExamPromises);
-
-      // Merge the updated exams back into the state
-      setExams([
-        ...exams.filter(exam => exam.status === 'synced'), // Keep exams that are already synced
-        ...updatedNewExams,
-        ...updatedEditedExams,
-      ]);
-
-      setChangesMade(false);
-      alert('Changes saved successfully!');
-    } catch (error) {
-      console.error('Error saving changes:', error);
-      alert('Failed to save changes. Please try again.');
-    }
-  };
 
   return (
       <div className="flex h-screen overflow-hidden">
@@ -244,15 +186,6 @@ const TeacherExam = () => {
             <p className="text-gray-600">Manage your exams effectively with iSchool.</p>
           </header>
 
-          {/*{changesMade && (*/}
-          {/*    <button*/}
-          {/*        onClick={handleSaveAllChanges}*/}
-          {/*        className="mb-4 mr-2 py-2 px-4 bg-green-500 text-white rounded-full hover:bg-green-600">*/}
-          {/*      Save All Changes*/}
-          {/*    </button>*/}
-          {/*)}*/}
-
-          {/*why is the above code while it is not needed as the changes are saved automatically*/}
 
           <button
               onClick={() => setIsAdding(true)}

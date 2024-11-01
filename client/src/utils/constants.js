@@ -24,6 +24,7 @@ export const EXAM_DELETE_ROUTE = `${EXAM_ROUTE}/delete`;
 export const EXAM_UPDATE_ROUTE = `${EXAM_ROUTE}/update`;
 export const EXAM_GET_ALL_ROUTE = `${EXAM_ROUTE}/get-all`;
 export const EXAM_TEACHER = `${EXAM_ROUTE}/teacher`;
+export const EXAM_AVAILABLE = `${EXAM_ROUTE}/teacher/available`;
 export const EXAM_STUDENT = `${EXAM_ROUTE}/student`;
 export const EXAM_RESULTS_STUDENT = `${EXAM_ROUTE}/student/result`;
 export const UPCOMING_EXAMS = `${EXAM_ROUTE}/upcoming`;
