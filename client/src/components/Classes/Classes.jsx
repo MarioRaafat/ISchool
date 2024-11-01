@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import SidebarTeacher from '../SideBar/sideBarTeacher.jsx';
 import { apiClient } from "@/lib/apiClient.js";
-import { TEACHER_CLASSES } from "@/utils/constants.js";
+import { TEACHER_CLASSES, GRADE_ROUTE } from "@/utils/constants.js";
 import { useAppstore } from "../../../store/index.js";
 import ClassCard from "./Card.jsx";
 
@@ -14,8 +14,14 @@ const Classes = () => {
     const fetchTeacherClasses = async () => {
       try {
         const response = await apiClient.post(TEACHER_CLASSES, { teacherId: userInfo.id });
-        if (response.status === 200) {
-          setClasses(response.data);
+        if (response.status === 200 && response.data) {
+          const classesWithDetails = await Promise.all(response.data.map(async (class_) => {
+            const avatarUrl = `https://ui-avatars.com/api/?name=${class_.name}&background=random&color=fff`;
+            const gradeResponse = await apiClient.get(`${GRADE_ROUTE}/${class_.grade_id}`);
+            const gradeLevel = gradeResponse.data.level;
+            return { ...class_, avatar: avatarUrl, gradeLevel };
+          }));
+          setClasses(classesWithDetails);
         } else {
           console.error('Failed to fetch classes:', response);
         }

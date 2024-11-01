@@ -39,7 +39,7 @@ const ClassCard = ({ classData, loading }) => {
         title={classData.name}
         description={
           <>
-            <p>{classData.description}</p>
+            <p>Grade Level: {classData.gradeLevel}</p>
             {showStudents && (
               <ul>
                 {students.map(student => (
