@@ -200,7 +200,15 @@ export const getClassesByTeacher = async (req, res) => {
 
 	try {
 		const teacher = await Teacher.findByPk(teacherId, {
-			include: [{ model: Class, as: 'Classes' }]
+			include: [{
+				model: Class,
+				as: 'Classes',
+				include: [{
+					model: Grade,
+					as: 'Grade',
+					attributes: ['id', 'level']
+				}]
+			}]
 		});
 
 		if (!teacher) {
@@ -210,7 +218,8 @@ export const getClassesByTeacher = async (req, res) => {
 		const classes = teacher.Classes.map(class_ => ({
 			id: class_.id,
 			name: class_.name,
-			description: class_.description,
+			grade_id: class_.grade_id,
+			gradeLevel: class_.Grade.level,
 			avatar: class_.avatar
 		}));
 

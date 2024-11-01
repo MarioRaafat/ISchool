@@ -24,7 +24,7 @@ router.post('/add_subject', verifyToken, addSubjectToClass);
 router.post('/student/courses', verifyToken, getStudentSubjects);
 router.post('/teacher/courses', verifyToken, getTeacherSubjects);
 router.post("/upcomingCourses", verifyToken, getUpcomingCourses);
-router.post('/students', getStudentsInClass);
+router.post('/students', verifyToken,  getStudentsInClass);
 router.post("/teacher/classes", verifyToken, getClassesByTeacher); // Add this line
 
 

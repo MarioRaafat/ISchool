@@ -15,10 +15,10 @@ const Classes = () => {
       try {
         const response = await apiClient.post(TEACHER_CLASSES, { teacherId: userInfo.id });
         if (response.status === 200 && response.data) {
-          const classesWithDetails = await Promise.all(response.data.map(async (class_) => {
-            const avatarUrl = `https://ui-avatars.com/api/?name=${class_.name}&background=random&color=fff`;
-            const gradeResponse = await apiClient.get(`${GRADE_ROUTE}/${class_.grade_id}`);
-            const gradeLevel = gradeResponse.data.level;
+			const classesWithDetails = await Promise.all(response.data.map(async (class_) => {
+				const avatarUrl = `https://ui-avatars.com/api/?name=${class_.name}&background=random&color=fff`;
+				const gradeLevel = class_.gradeLevel;
+				
             return { ...class_, avatar: avatarUrl, gradeLevel };
           }));
           setClasses(classesWithDetails);
@@ -27,8 +27,10 @@ const Classes = () => {
         }
       } catch (error) {
         console.error('Error fetching classes:', error);
-      } finally {
-        setLoading(false);
+	  } finally {
+		  setTimeout(() => {
+			  setLoading(false);
+		  }, 1500);
       }
     };
 
