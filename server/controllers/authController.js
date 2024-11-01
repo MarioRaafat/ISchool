@@ -1,9 +1,10 @@
-// server/controllers/authController.js
 import jwt from "jsonwebtoken";
 import { compare } from "bcrypt";
 import models from '../models/index.js';
 import {BlobServiceClient} from "@azure/storage-blob";
+import dotenv from "dotenv";
 
+dotenv.config();
 const { Teacher, Student } = models;
 
 const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
