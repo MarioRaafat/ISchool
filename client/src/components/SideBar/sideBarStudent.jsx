@@ -124,17 +124,6 @@ const SideBarStudent = () => {
                     }>
                     <FaFileAlt/> Exams
                 </div>
-                <div
-                    className={`hover:bg-amber-50 cursor-pointer rounded-full border-2 border-hidden px-2 py-1 
-                    flex items-center gap-2 ${isMobile && !isSidebarOpen? "hidden" : null}`}
-                    onClick={
-                        () => {
-                            if(URLPath === "results") return;
-                            navigate("/results");
-                        }
-                    }>
-                    <FaRegChartBar/> Results
-                </div>
 
                 <div className={`absolute ${isMobile? "bottom-2" : "bottom-8"} flex flex-col w-[85%] gap-3 ${isMobile && !isSidebarOpen? "hidden" : null}`}>
                     <div

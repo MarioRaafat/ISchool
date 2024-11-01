@@ -1,120 +1,62 @@
-import React, { useState } from 'react';
-import Modal from "../../ui/Modal";
-
-const exams = [
-  { id: 1, name: 'Mathematics', description: 'Final exam for Mathematics.', date: '2024-10-29', startTime: '10:00', endTime: '12:00', examPath: 'https://www.google.com', day: 'today' },
-  { id: 2, name: 'Science', description: 'Mid-term for Science.', date: '2024-10-30', startTime: '13:00', endTime: '15:00', examPath: 'https://www.google.com', day: 'tomorrow' },
-  { id: 3, name: 'English Literature', description: 'Assignment due.', date: '2024-10-31', startTime: '09:00', endTime: '11:00', examPath: 'https://www.google.com', day: 'in 2 days' },
-];
+import React, { useState, useEffect } from 'react';
+import { Card, CardContent } from "@/components/ui/Card";
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { apiClient } from "@/lib/apiClient.js";
+import { CURRENT_ASSIGNMENTS } from "@/utils/constants.js";
+import { useAppstore } from "../../../../store/index.js";
 
 const CurrentAssignments = () => {
-  const [selectedExam, setSelectedExam] = useState(null);
-  const [file, setFile] = useState(null); // State for the uploaded file
-  const [isLoading, setIsLoading] = useState(false); // Loading state for upload
+  const { userInfo } = useAppstore();
+  const [assignments, setAssignments] = useState([]);
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]); // Get the selected file
-  };
-
-  const handleUpload = async () => {
-    if (!file) {
-      alert("Please select a file to upload.");
-      return;
-    }
-
-    setIsLoading(true); // Set loading state to true
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    try {
-      // Replace the URL below with your actual upload endpoint
-      const response = await fetch('https://ischool-production.up.railway.app/api/exam', {
-        method: 'POST',
-        body: formData,
-      });
-
-      if (!response.ok) {
-        throw new Error('Upload failed');
+  useEffect(() => {
+    const fetchCurrentAssignments = async () => {
+      try {
+        const response = await apiClient.post(CURRENT_ASSIGNMENTS, { classId: userInfo.classId });
+        if (response.status === 200 && response.data) {
+          setAssignments(response.data);
+        } else {
+          console.error('Error fetching last assignments:', response);
+        }
+      } catch (error) {
+        console.error('Error fetching last assignments:', error);
       }
+    };
 
-      // Handle success (optional: you can process the response)
-      console.log("File uploaded successfully:", file.name);
-      alert("File uploaded successfully!"); // Feedback for successful upload
-
-      // Close the modal after successful upload
-      setSelectedExam(null);
-      setFile(null); // Reset the file state
-    } catch (error) {
-      console.error("Error uploading file:", error);
-      alert("Error uploading file: " + error.message); // Feedback for upload failure
-    } finally {
-      setIsLoading(false); // Reset loading state
+    if (userInfo) {
+      fetchCurrentAssignments();
     }
-  };
+  }, [userInfo]);
 
   return (
-    <div className="mb-8 bg-white shadow-lg rounded-2xl p-6">
-      <h3 className="text-lg font-semibold mb-4 text-gray-800">Current Assignments</h3>
-      <ul className="space-y-4">
-        {exams.map((exam) => (
-          <li
-            key={exam.id}
-            className="flex items-center justify-between text-gray-700 cursor-pointer hover:bg-gray-100 p-2 rounded-lg"
-            onClick={() => setSelectedExam(exam)}
-          >
-            <div className="flex items-center space-x-4">
-              <img
-                src={`https://ui-avatars.com/api/?name=${exam.name}&background=random&color=fff`} 
-                alt="avatar"
-                className="w-8 h-8 rounded-full"
-              />
-              <div>
-                <p className="text-md font-semibold">{exam.name}</p>
-                <p className="text-sm text-gray-500">{exam.description}</p>
-                <p className="text-xs text-gray-400">
-                  {exam.date} - {exam.startTime} to {exam.endTime}
-                </p>
-              </div>
-            </div>
-            <span className="text-gray-500 text-sm">{exam.day}</span>
-          </li>
-        ))}
-      </ul>
-
-      {/* Modal for exam details */}
-      <Modal isOpen={selectedExam !== null} onClose={() => setSelectedExam(null)}>
-        <div className="text-gray-800">
-          <h2 className="text-xl font-semibold mb-4">{selectedExam?.name}</h2>
-          <p className="text-gray-600">Due Date: {selectedExam?.day}</p>
-          <p className="text-gray-600">Date: {selectedExam?.date}</p>
-          <p className="text-gray-600">Time: {selectedExam?.startTime} - {selectedExam?.endTime}</p>
-          <a
-            href={selectedExam?.examPath}
-            className="mt-4 inline-block py-2 px-4 bg-purple-600 text-white rounded-full hover:bg-purple-700"
-            download
-          >
-            Download Exam
-          </a>
-
-          {/* File Upload Section */}
-          <div className="mt-6">
-            <input
-              type="file"
-              onChange={handleFileChange}
-              className="border rounded-md p-2 mb-2"
-            />
-            <button
-              onClick={handleUpload}
-              className={`py-2 px-4 rounded-full ${isLoading ? 'bg-gray-400' : 'bg-green-600 hover:bg-green-700'} text-white`}
-              disabled={isLoading} // Disable button during upload
-            >
-              {isLoading ? 'Uploading...' : 'Upload Solution'}
-            </button>
-          </div>
-        </div>
-      </Modal>
-    </div>
+      <div className="flex justify-center items-center p-4">
+        <Carousel className="w-full max-w-2xl">
+          <CarouselContent>
+            {assignments.map((assignment, index) => (
+                <CarouselItem key={index}>
+                  <div className="p-2">
+                    <Card>
+                      <CardContent className="flex items-center justify-between p-6">
+                        <div>
+                          <p className="text-xl md:text-2xl font-semibold">{assignment.name}</p>
+                          <p className="text-sm md:text-base text-gray-500">Teacher: {assignment.teacherName}</p>
+                          <p className="text-sm md:text-base text-gray-500">Date: {assignment.date}</p>
+                          <p className="text-sm md:text-base text-gray-500">Time: {`${assignment.startTime} - ${assignment.endTime}`}</p>
+                          {/*<p className="text-sm md:text-base text-gray-500">Avg Grade: {assignment.avgGrade}</p>*/}
+                          {/*<p className="text-sm md:text-base text-gray-500">Rank: {assignment.rank}</p>*/}
+                        </div>
+                        <div className="w-14 h-14">
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </CarouselItem>
+            ))}
+          </CarouselContent>
+          <CarouselPrevious />
+          <CarouselNext />
+        </Carousel>
+      </div>
   );
 };
 

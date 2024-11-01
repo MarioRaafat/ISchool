@@ -12,8 +12,8 @@ const router = express.Router();
 router.post('/student', verifyToken, getResultsByStudent);
 router.post('/teacher', verifyToken, getResultsByTeacher);
 router.post('/student/rank', verifyToken, getRankByStudent);
-router.post('/student/exam/rank', verifyToken, getRankByStudent);
-router.post('/student/assignment/rank', verifyToken, getRankByStudent);
+//router.post('/student/exam/rank', verifyToken, getRankByStudent);
+//router.post('/student/assignment/rank', verifyToken, getRankByStudent);
 
 router.post('/teacher/average', verifyToken, getAverageResultsByTeacher);
 

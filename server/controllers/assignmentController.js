@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import multer from 'multer';
 
-const { Assignment, Student, Teacher } = models;
+const { Assignment, Student, Teacher, Result } = models;
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -159,11 +159,11 @@ export const getUpcomingAssignments = async (req, res) => {
 		const classId = student.class_id;
 		const assignments = await Assignment.findAll({ where: { class_id: classId } });
 		const nextAssignments = assignments
-			//.filter(assignment => assignment.startDate >= now)
+			.filter(assignment => new Date(assignment.startDate).getTime() >= now.getTime())
 			.map(assignment => {
 				const date = assignment.startDate.toString().slice(0, 10);
-				let [startHours, startMinutes] = assignment.startDate.toString().slice(16, 21).split(':');
-				let [endHours, endMinutes] = assignment.endDate.toString().slice(16, 21).split(':');
+				let [startHours, startMinutes] = assignment.startDate.toString().slice(11, 16).split(':');
+				let [endHours, endMinutes] = assignment.endDate.toString().slice(11, 16).split(':');
 				const startPeriod = startHours >= 12 ? 'PM' : 'AM';
 				const endPeriod = endHours >= 12 ? 'PM' : 'AM';
 				startHours = startHours % 12;
@@ -190,16 +190,21 @@ export const getUpcomingAssignments = async (req, res) => {
 }
 
 export const getLastAssignments = async (req, res) => {
-	const { classId } = req.body;
+	const { classId, studentId } = req.body;
 	const now = new Date();
 	try {
 		const assignments = await Assignment.findAll({ where: { class_id: classId } });
-		const lastAssignments = assignments
-			.filter(assignment => assignment.endDate < now)
-			.map(assignment => {
+		const results = await Result.findAll({ where: { student_id: studentId } });
+		results.filter(result => result.assignment_id !== null);
+		const lastAssignments = await Promise.all(assignments
+			.filter(assignment => new Date(assignment.endDate).getTime() < now.getTime())
+			.map(async assignment => {
 				const date = assignment.startDate.toString().slice(0, 10);
-				let [startHours, startMinutes] = assignment.startDate.toString().slice(16, 21).split(':');
-				let [endHours, endMinutes] = assignment.endDate.toString().slice(16, 21).split(':');
+				const teacher = await Teacher.findByPk(assignment.teacher_id);
+				const studentResult = results.find(result => result.assignment_id === assignment.id);
+
+				let [startHours, startMinutes] = assignment.startDate.toString().slice(11, 16).split(':');
+				let [endHours, endMinutes] = assignment.endDate.toString().slice(11, 16).split(':');
 				const startPeriod = startHours >= 12 ? 'PM' : 'AM';
 				const endPeriod = endHours >= 12 ? 'PM' : 'AM';
 				startHours = startHours % 12;
@@ -207,13 +212,18 @@ export const getLastAssignments = async (req, res) => {
 
 				return {
 					name: assignment.name,
+					teacherName: `${teacher.firstName} ${teacher.lastName}`,
 					date,
+					grade: studentResult.grade,
+					maxGrade: assignment.maxGrade,
 					startTime: `${startHours}:${startMinutes} ${startPeriod}`,
 					endTime: `${endHours}:${endMinutes} ${endPeriod}`,
 					assignmentDate: assignment.startDate
 				};
 			})
-			.sort((a, b) => b.assignmentDate - a.assignmentDate) // descending
+		);
+
+		lastAssignments.sort((a, b) => b.assignmentDate - a.assignmentDate); // descending
 
 		res.status(200).json(lastAssignments);
 	} catch (error) {
@@ -221,5 +231,73 @@ export const getLastAssignments = async (req, res) => {
 		res.status(500).json({ message: 'Error fetching assignments' });
 	}
 }
+
+export const getCurrentAssignments = async (req, res) => {
+	const { classId } = req.body;
+	const now = new Date();
+	try {
+		const assignments = await Assignment.findAll({ where: { class_id: classId } });
+		const lastAssignments = await Promise.all(assignments
+			.filter(assignment => new Date(assignment.endDate).getTime() < now.getTime())
+			.map(async assignment => {
+				const date = assignment.startDate.toString().slice(0, 10);
+				const teacher = await Teacher.findByPk(assignment.teacher_id);
+
+				let [startHours, startMinutes] = assignment.startDate.toString().slice(11, 16).split(':');
+				let [endHours, endMinutes] = assignment.endDate.toString().slice(11, 16).split(':');
+				const startPeriod = startHours >= 12 ? 'PM' : 'AM';
+				const endPeriod = endHours >= 12 ? 'PM' : 'AM';
+				startHours = startHours % 12;
+				endHours = endHours % 12;
+
+				return {
+					name: assignment.name,
+					teacherName: `${teacher.firstName} ${teacher.lastName}`,
+					date,
+					maxGrade: assignment.maxGrade,
+					startTime: `${startHours}:${startMinutes} ${startPeriod}`,
+					endTime: `${endHours}:${endMinutes} ${endPeriod}`,
+					assignmentDate: assignment.startDate
+				};
+			})
+		);
+
+		lastAssignments.sort((a, b) => b.assignmentDate - a.assignmentDate); // descending
+
+		res.status(200).json(lastAssignments);
+	} catch (error) {
+		console.log(error);
+		res.status(500).json({ message: 'Error fetching assignments' });
+	}
+}
+
+
+export const getAssignmentResultsByStudent = async (req, res) => {
+	const { studentId } = req.body;
+	try {
+		const results = await Result.findAll({ where: { student_id: studentId } });
+		const formattedResults = await Promise.all(results
+			.filter(result => result.assignment_id !== null)
+			.map(async (result) => {
+				const assignment = await Assignment.findByPk(result.assignment_id);
+				return {
+					id: result.id,
+					grade: result.grade,
+					maxGrade: assignment.maxGrade,
+					assignmentName: assignment.name,
+					assignmentDescription: assignment.description,
+					assignmentStartDate: assignment.startDate,
+					assignmentEndDate: assignment.endDate,
+					// assignmentFile: assignment.filePath
+				};
+			})
+			.sort((a, b) => b.assignmentStartDate - a.assignmentStartDate) // descending
+		);
+		res.status(200).json(formattedResults);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Error getting results' });
+	}
+};
 
 export { upload };

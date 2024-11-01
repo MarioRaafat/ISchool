@@ -35,6 +35,8 @@ export const ASSIGNMENT_UPDATE_ROUTE = `${ASSIGNMENT_ROUTE}/update`;
 export const ASSIGNMENT_GET_ALL_ROUTE = `${ASSIGNMENT_ROUTE}/get-all`;
 export const ASSIGNMENT_TEACHER = `${ASSIGNMENT_ROUTE}/teacher`;
 export const ASSIGNMENT_STUDENT = `${ASSIGNMENT_ROUTE}/student`;
+export const ASSIGNMENT_RESULTS_STUDENT = `${ASSIGNMENT_ROUTE}/student/result`;
+export const CURRENT_ASSIGNMENTS = `${ASSIGNMENT_ROUTE}/current`;
 export const UPCOMING_ASSIGNMENTS = `${ASSIGNMENT_ROUTE}/upcoming`;
 export const LAST_ASSIGNMENTS = `${ASSIGNMENT_ROUTE}/last`;
 

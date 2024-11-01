@@ -7,11 +7,10 @@ const { Class, Subject } = models;
 const addClassSubjects = async () => {
 	try {
 		const classes = await Class.findAll();
-		const subjects = await Subject.findAll();
 
 		for (const class_ of classes) {
+			const subjects = await Subject.findAll({ where: { grade_id: class_.grade_id }});
 			for (const subject of subjects) {
-				// Add the subject to the class
 				await class_.addSubject(subject);
 				console.log(`Subject ${subject.name} added to Class ${class_.name}`);
 			}

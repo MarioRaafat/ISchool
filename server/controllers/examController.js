@@ -270,7 +270,9 @@ export const getExamResultsByStudent = async (req, res) => {
 					examEndDate: exam.endDate,
 					// examFile: exam.filePath
 				};
-			}));
+			})
+			.sort((a, b) => b.examStartDate - a.examStartDate) // descending
+		);
 		res.status(200).json(formattedResults);
 	} catch (error) {
 		console.error(error);

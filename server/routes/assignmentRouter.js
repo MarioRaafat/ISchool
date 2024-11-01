@@ -9,6 +9,8 @@ import {
     getUpcomingAssignments,
     getAssignmentsByTeacher,
     getAssignmentsByStudent,
+    getAssignmentResultsByStudent,
+    getCurrentAssignments,
     upload,
 } from '../controllers/assignmentController.js';
 import {verifyToken} from "../middlewares/verifyToken.js";
@@ -22,6 +24,8 @@ router.put('/update/:id', verifyToken, upload.single('file'), updateAssignment);
 router.delete('/delete/:id', verifyToken, deleteAssignment);
 router.get('/teacher/:teacherId', verifyToken, getAssignmentsByTeacher);
 router.get('/student/:studentId', verifyToken, getAssignmentsByStudent);
+router.post('/student/result', verifyToken, getAssignmentResultsByStudent);
+router.post('/current', verifyToken, getCurrentAssignments);
 router.post('/upcoming', verifyToken, getUpcomingAssignments);
 router.post('/last', verifyToken, getLastAssignments);
 
