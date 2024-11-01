@@ -11,12 +11,14 @@ import Result from './result.js';
 import ClassSubjects from './class_subjects.js';
 import ClassTeachers from './class_teachers.js';
 import TeacherSubjects from './teacher_subjects.js';
+import pg from 'pg'; // Import the pg module
 
 dotenv.config();
 
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
 	dialect: 'postgres',
 	protocol: 'postgres',
+	dialectModule: pg, // Explicitly specify the pg module
 	logging: false,
 });
 
