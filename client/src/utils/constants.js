@@ -14,6 +14,8 @@ export const COURSES_STUDENT_ROUTE = `${CLASS_ROUTE}/student/courses`;
 export const COURSES_TEACHER_ROUTE = `${CLASS_ROUTE}/teacher/courses`;
 export const CLASS_UPCOMING_COURSES = `${CLASS_ROUTE}/upcomingCourses`;
 export const CLASS_INFO = `${CLASS_ROUTE}/student`;
+export const STUDENTS_IN_CLASS = `${CLASS_ROUTE}/students`;
+export const TEACHER_CLASSES = `${CLASS_ROUTE}/teacher/classes`;
 
 export const EXAM_ROUTE = "api/exam";
 export const EXAM_CREATE = `${EXAM_ROUTE}/create`;
