@@ -2,9 +2,14 @@
 import jwt from "jsonwebtoken";
 import { compare } from "bcrypt";
 import models from '../models/index.js';
-import student from "../models/student.js";
+import {BlobServiceClient} from "@azure/storage-blob";
 
 const { Teacher, Student } = models;
+
+const AZURE_STORAGE_CONNECTION_STRING = process.env.AZURE_STORAGE_CONNECTION_STRING;
+const containerName = "profile-images";
+const blobServiceClient = BlobServiceClient.fromConnectionString(AZURE_STORAGE_CONNECTION_STRING);
+const containerClient = blobServiceClient.getContainerClient(containerName);
 
 const createToken = async (email, id) => {
   return jwt.sign({ email, id }, process.env.JWT_KEY, {
@@ -103,4 +108,54 @@ export const Logout = async (req, res) => {
     sameSite: 'None'
   });
   res.status(200).json({ message: "Logged out" });
+};
+
+const uploadImageToAzure = async (imageBuffer, imageName) => {
+  const blockBlobClient = containerClient.getBlockBlobClient(imageName);
+  await blockBlobClient.upload(imageBuffer, imageBuffer.length);
+  return blockBlobClient.url; // Return URL of uploaded image
+};
+
+export const addProfileImage = async (req, res) => {
+  const userId = req.userId;
+  const imageBuffer = req.file.buffer;
+
+  if (!imageBuffer) {
+    return res.status(400).send('No image file provided');
+  }
+
+  const imageName = `${userId}-${Date.now()}-${req.file.originalname}`;
+  try {
+    const imageUrl = await uploadImageToAzure(imageBuffer, imageName);
+
+    await Student.update({ image: imageUrl }, { where: { id: userId } });
+    res.status(200).json({ message: "Profile image uploaded successfully", imageUrl });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error uploading image');
+  }
+};
+
+export const deleteProfileImage = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const student = await Student.findByPk(userId);
+    if (!student || !student.image) {
+      return res.status(404).json({ message: 'User not found or no image to delete' });
+    }
+
+    const imageUrl = student.image;
+    const imageName = imageUrl.split('/').pop(); // Extract the image name from URL
+
+    // Delete image from Azure Blob Storage
+    const blockBlobClient = containerClient.getBlockBlobClient(imageName);
+    await blockBlobClient.delete();
+
+    await Student.update({ image: null }, { where: { id: userId } });
+    res.status(200).json({ message: "Profile image deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error deleting image');
+  }
 };

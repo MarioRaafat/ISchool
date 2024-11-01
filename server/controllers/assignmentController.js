@@ -3,16 +3,16 @@ import multer from 'multer';
 
 const { Assignment, Student, Teacher, Result } = models;
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-	destination: (req, file, cb) => {
-		cb(null, 'uploads/assignments');
-	},
-	filename: (req, file, cb) => {
-		cb(null, `${Date.now()}-${file.originalname}`);
-	}
-});
-const upload = multer({ storage });
+// // Configure multer for file uploads
+// const storage = multer.diskStorage({
+// 	destination: (req, file, cb) => {
+// 		cb(null, 'uploads/assignments');
+// 	},
+// 	filename: (req, file, cb) => {
+// 		cb(null, `${Date.now()}-${file.originalname}`);
+// 	}
+// });
+// const upload = multer({ storage });
 
 // Create a new assignment
 export const createAssignment = async (req, res) => {
@@ -299,5 +299,3 @@ export const getAssignmentResultsByStudent = async (req, res) => {
 		res.status(500).json({ message: 'Error getting results' });
 	}
 };
-
-export { upload };

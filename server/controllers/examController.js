@@ -3,16 +3,6 @@ import multer from 'multer';
 
 const { Exam, Student, Result, Class, Teacher } = models;
 
-// Configure multer for file uploads
-const storage = multer.diskStorage({
-	destination: (req, file, cb) => {
-		cb(null, 'uploads/exams');
-	},
-	filename: (req, file, cb) => {
-		cb(null, `${Date.now()}-${file.originalname}`);
-	}
-});
-const upload = multer({ storage });
 
 // Create a new exam
 export const createExam = async (req, res) => {
@@ -302,6 +292,3 @@ export const getExamResultsByStudent = async (req, res) => {
 		res.status(500).json({ message: 'Error getting results' });
 	}
 };
-
-
-export { upload };

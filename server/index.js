@@ -16,14 +16,9 @@ const corsOptions = {
 	methods: ['GET, POST, PUT, DELETE'],
 };
 
-
-//app.use("/uploads/profiles", express.static("uploads/profiles"));  
-// we will need it if we decided to store the images in the server for students and teachers
-
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(cookieParser());
-
 
 app.use('/api/auth', authRouter);
 app.use('/api', routes);
