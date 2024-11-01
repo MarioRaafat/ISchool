@@ -169,3 +169,54 @@ export const getUpcomingCourses = async (req, res) => {
 		res.status(500).json({ message: 'An error occurred', error });
 	}
 }
+
+export const getStudentsInClass = async (req, res) => {
+	const { classId } = req.body;
+
+	try {
+		const classInstance = await Class.findByPk(classId, {
+			include: [{ model: Student, as: 'Students' }]
+		});
+
+		if (!classInstance) {
+			return res.status(404).json({ message: 'Class not found' });
+		}
+
+		const students = classInstance.Students.map(student => ({
+			id: student.id,
+			name: student.firstName + ' ' + student.lastName,
+			email: student.email
+		}));
+
+		res.status(200).json(students);
+	} catch (error) {
+		console.error('Error fetching students:', error);
+		res.status(500).json({ message: 'Error fetching students' });
+	}
+};
+
+export const getClassesByTeacher = async (req, res) => {
+	const { teacherId } = req.body;
+
+	try {
+		const teacher = await Teacher.findByPk(teacherId, {
+			include: [{ model: Class, as: 'Classes' }]
+		});
+
+		if (!teacher) {
+			return res.status(404).json({ message: 'Teacher not found' });
+		}
+
+		const classes = teacher.Classes.map(class_ => ({
+			id: class_.id,
+			name: class_.name,
+			description: class_.description,
+			avatar: class_.avatar
+		}));
+
+		res.status(200).json(classes);
+	} catch (error) {
+		console.error('Error fetching classes:', error);
+		res.status(500).json({ message: 'Error fetching classes' });
+	}
+};

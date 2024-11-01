@@ -1,5 +1,5 @@
 import express from 'express';
-import { createGrade, getAllGrades, getGradeByLevel } from '../controllers/gradeController.js';
+import { createGrade, getAllGrades, getGradeByLevel, getGradeById } from '../controllers/gradeController.js';
 
 const router = express.Router();
 
@@ -11,5 +11,7 @@ router.get('/', getAllGrades);
 
 // Get a grade by level
 router.get('/:level', getGradeByLevel);
+
+router.get('/:id', getGradeById);
 
 export default router;

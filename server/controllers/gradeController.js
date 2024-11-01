@@ -41,3 +41,18 @@ export const getGradeByLevel = async (req, res) => {
 		res.status(500).json({ message: 'Error getting grade' });
 	}
 };
+
+export const getGradeById = async (req, res) => {
+	const { id } = req.params;
+
+	try {
+		const grade = await Grade.findByPk(id);
+		if (!grade) {
+			return res.status(404).json({ message: 'Grade not found' });
+		}
+		res.status(200).json(grade);
+	} catch (error) {
+		console.error('Error fetching grade:', error);
+		res.status(500).json({ message: 'Error fetching grade' });
+	}
+};

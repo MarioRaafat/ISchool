@@ -7,6 +7,7 @@ import MyCalendar from '@/components/Calendar/Calendar.jsx';
 import Exam from '@/components/Exam/Exam.jsx';
 import Setting from '@/components/Setting/Setting.jsx';
 import Assignment from '@/components/Assignments/Assignment.jsx';
+import Classes from '@/components/Classes/Classes.jsx';
 import { useAppstore } from '../store/index.js';
 import { apiClient } from '@/lib/apiClient.js';
 import { GET_USER_INFO } from '@/utils/constants.js';
@@ -101,6 +102,13 @@ function App() {
                         <Setting />
                     </PrivateRoute>
                 } />
+
+				<Route path="/classes" element={
+					<PrivateRoute>
+						<Classes />
+					</PrivateRoute>
+				} />
+				
                 <Route path="*" element={
                     <Navigate to="/auth" />
                 } />
