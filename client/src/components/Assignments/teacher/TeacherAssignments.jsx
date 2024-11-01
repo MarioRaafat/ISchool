@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Modal from '../../ui/Modal';
-import {EXAM_CREATE, EXAM_DELETE_ROUTE, EXAM_ROUTE, EXAM_TEACHER, EXAM_UPDATE_ROUTE} from "@/utils/constants.js";
+import {
+  ASSIGNMENT_TEACHER,
+  ASSIGNMENT_CREATE,
+  ASSIGNMENT_DELETE_ROUTE,
+  ASSIGNMENT_ROUTE,
+  ASSIGNMENT_UPDATE_ROUTE
+} from "@/utils/constants.js";
 import { v4 as uuidv4 } from 'uuid'; // Import UUID library for generating temporary IDs
 import axios from "axios";
 import { useAppstore } from "../../../../store/index.js";
@@ -9,9 +15,9 @@ import { useToast } from "@/hooks/use-toast"
 
 const TeacherAssignments = () => {
   const { toast } = useToast();
-  const [exams, setExams] = useState([]);
-  const [selectedExam, setSelectedExam] = useState(null);
-  const [newExam, setNewExam] = useState({
+  const [assignments, setAssignments] = useState([]);
+  const [selectedAssignment, setSelectedAssignment] = useState(null);
+  const [newAssignment, setNewAssignment] = useState({
     name: '',
     description: '',
     date: new Date().toISOString().split('T')[0],
@@ -24,26 +30,26 @@ const TeacherAssignments = () => {
   const { userInfo } = useAppstore();
 
   useEffect(() => {
-    // Fetch exams for the logged-in teacher from the server
-    const fetchExams = async () => {
+    // Fetch assignments for the logged-in teacher from the server
+    const fetchAssignments = async () => {
       try {
-        const response = await apiClient.get(`${EXAM_TEACHER}/${userInfo.id}`);
+        const response = await apiClient.get(`${ASSIGNMENT_TEACHER}/${userInfo.id}`);
         if (response.status === 200 && response.data) {
-          console.log('Exams fetched:', response.data);
-          setExams(response.data.map(exam => ({...exam, status: 'synced'})));
+          console.log('Assignments fetched:', response.data);
+          setAssignments(response.data.map(assignment => ({...assignment, status: 'synced'})));
         } else {
-          console.error('Failed to fetch exams:', response);
+          console.error('Failed to fetch assignments:', response);
           toast({ variant: "destructive", title: "Uh oh! Something went wrong.", description: "There was a problem with your request." });
         }
       } catch (error) {
-        console.error('Error fetching exams:', error);
+        console.error('Error fetching assignments:', error);
       }
     };
 
     if (userInfo) {
-      fetchExams();
+      fetchAssignments();
     }
-  }, [userInfo, exams]);
+  }, [userInfo, assignments]);
 
   // From Chat-GPT
   function convertToISOFormat(dateStr) {
@@ -64,168 +70,168 @@ const TeacherAssignments = () => {
     return dateStr;
   }
 
-  const handleAddExam = async () => {
+  const handleAddAssignment = async () => {
     const tempId = uuidv4(); // Generate a temporary unique ID
-    const examWithTempId = { ...newExam, id: tempId, fileUrl: null, status: 'new' };
-    setExams([...exams, examWithTempId]); // Immediately show the new exam in the list
+    const assignmentWithTempId = { ...newAssignment, id: tempId, fileUrl: null, status: 'new' };
+    setAssignments([...assignments, assignmentWithTempId]); // Immediately show the new assignment in the list
     setChangesMade(true);
     setIsAdding(false);
 
     try {
-      const startTime = newExam.startTime.toString();
-      const endTime = newExam.endTime.toString();
-      const date = newExam.date.toString();
+      const startTime = newAssignment.startTime.toString();
+      const endTime = newAssignment.endTime.toString();
+      const date = newAssignment.date.toString();
       const startDate = new Date(`${date}T${startTime}:00`);
       const endDate = new Date(`${date}T${endTime}:00`);
 
       const formData = new FormData();
-      formData.append('name', newExam.name);
-      formData.append('description', newExam.description);
+      formData.append('name', newAssignment.name);
+      formData.append('description', newAssignment.description);
       formData.append('startDate', startDate);
       formData.append('endDate', endDate);
-      // you need to append the class that the teacher want to add the exam to
-      // you need to append the max grade for the exam
+      // you need to append the class that the teacher want to add the assignment to
+      // you need to append the max grade for the assignment
       formData.append('teacher_id', userInfo.id);
-      if (newExam.file) formData.append('file', newExam.file);
+      if (newAssignment.file) formData.append('file', newAssignment.file);
 
-      const response = await apiClient.post(EXAM_CREATE, formData, {
+      const response = await apiClient.post(ASSIGNMENT_CREATE, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
-      // Update the exam with the ID and file URL from the server
-      setExams(exams.map(exam =>
-          exam.id === tempId ? { ...exam, id: response.data.id, fileUrl: response.data.fileUrl, status: 'synced' } : exam
+      // Update the assignment with the ID and file URL from the server
+      setAssignments(assignments.map(assignment =>
+          assignment.id === tempId ? { ...assignment, id: response.data.id, fileUrl: response.data.fileUrl, status: 'synced' } : assignment
       ));
       setChangesMade(false);
     } catch (error) {
-      console.error('Error adding exam:', error);
-      alert('Failed to add exam. Please try again.');
+      console.error('Error adding assignment:', error);
+      alert('Failed to add assignment. Please try again.');
     }
   };
 
   const handleFileChange = (event) => {
-    setNewExam({ ...newExam, file: event.target.files[0] });
+    setNewAssignment({ ...newAssignment, file: event.target.files[0] });
     setChangesMade(true);
   };
 
-  const handleEditExam = (exam) => {
-    setSelectedExam(exam);
-    setNewExam(exam);
+  const handleEditAssignment = (assignment) => {
+    setSelectedAssignment(assignment);
+    setNewAssignment(assignment);
     setIsAdding(false);
   };
 
-  const handleSaveExam = async () => {
-    // const updatedExams = exams.map(exam =>
-    //     exam.id === newExam.id
-    //         ? { ...newExam, status: 'edited' }
-    //         : exam
+  const handleSaveAssignment = async () => {
+    // const updatedAssignments = assignments.map(assignment =>
+    //     assignment.id === newAssignment.id
+    //         ? { ...newAssignment, status: 'edited' }
+    //         : assignment
     // );
-    // setExams(updatedExams);
-    // setSelectedExam(null);
+    // setAssignments(updatedAssignments);
+    // setSelectedAssignment(null);
     setChangesMade(true);
 
     try {
-      const startTime = newExam.startTime.toString();
-      const endTime = newExam.endTime.toString();
-      const date = convertToISOFormat(newExam.date.toString());
+      const startTime = newAssignment.startTime.toString();
+      const endTime = newAssignment.endTime.toString();
+      const date = convertToISOFormat(newAssignment.date.toString());
       const startDate = new Date(`${date}T${startTime}:00`).toISOString();
       const endDate = new Date(`${date}T${endTime}:00`).toISOString();
 
       const formData = new FormData();
-      formData.append('name', newExam.name);
-      formData.append('description', newExam.description);
+      formData.append('name', newAssignment.name);
+      formData.append('description', newAssignment.description);
       formData.append('startDate', startDate);
       formData.append('endDate', endDate);
-      // you need to append the class that the teacher want to add the exam to
-      // you need to append the max grade for the exam
+      // you need to append the class that the teacher want to add the assignment to
+      // you need to append the max grade for the assignment
       formData.append('teacher_id', userInfo.id);
-      if (newExam.file) formData.append('file', newExam.file);
+      if (newAssignment.file) formData.append('file', newAssignment.file);
 
-      const response = await apiClient.put(`${EXAM_UPDATE_ROUTE}/${newExam.id}`, formData, {
+      const response = await apiClient.put(`${ASSIGNMENT_UPDATE_ROUTE}/${newAssignment.id}`, formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
 
       if (response.status === 400) {
         toast({ variant: "destructive", title: "All fields are required", description: "Please fill in all fields" });
       } else if (response.status === 200) {
-        setExams(exams.map(exam =>
-            exam.id === newExam.id ? { ...exam, fileUrl: response.data.fileUrl, status: 'synced' } : exam
+        setAssignments(assignments.map(assignment =>
+            assignment.id === newAssignment.id ? { ...assignment, fileUrl: response.data.fileUrl, status: 'synced' } : assignment
         ));
         setChangesMade(false);
-        setSelectedExam(null);
+        setSelectedAssignment(null);
       } else {
         toast({ variant: "destructive", title: "Uh oh! Something went wrong.", description: "There is an error with your update request" });
-        setSelectedExam(null);
+        setSelectedAssignment(null);
       }
 
     } catch (error) {
-      console.error('Error saving exam:', error);
-      alert('Failed to save exam. Please try again.');
+      console.error('Error saving assignment:', error);
+      alert('Failed to save assignment. Please try again.');
     }
   };
 
-  const handleDeleteExam = async (id) => {
+  const handleDeleteAssignment = async (id) => {
     try {
-      const response = await apiClient.delete(`${EXAM_DELETE_ROUTE}/${id}`);
+      const response = await apiClient.delete(`${ASSIGNMENT_DELETE_ROUTE}/${id}`);
       if (response.status !== 200) {
         toast({ variant: "destructive", title: "Uh oh! Something went wrong.", description: "There is an error with your delete request" });
       }
-      setExams(exams.filter(exam => exam.id !== id));
+      setAssignments(assignments.filter(assignment => assignment.id !== id));
       setChangesMade(true);
     } catch (error) {
-      console.error('Error deleting exam:', error);
-      alert('Failed to delete exam. Please try again.');
+      console.error('Error deleting assignment:', error);
+      alert('Failed to delete assignment. Please try again.');
     }
   };
 
   const handleSaveAllChanges = async () => {
-    const newExams = exams.filter(exam => exam.status === 'new');
-    const editedExams = exams.filter(exam => exam.status === 'edited');
+    const newAssignments = assignments.filter(assignment => assignment.status === 'new');
+    const editedAssignments = assignments.filter(assignment => assignment.status === 'edited');
 
     try {
-      // Save new exams to the server
-      const newExamPromises = newExams.map(async (exam) => {
+      // Save new assignments to the server
+      const newAssignmentPromises = newAssignments.map(async (assignment) => {
         const formData = new FormData();
-        formData.append('name', exam.name);
-        formData.append('description', exam.description);
-        formData.append('date', exam.date);
-        formData.append('startTime', exam.startTime);
-        formData.append('endTime', exam.endTime);
-        if (exam.file) formData.append('file', exam.file);
+        formData.append('name', assignment.name);
+        formData.append('description', assignment.description);
+        formData.append('date', assignment.date);
+        formData.append('startTime', assignment.startTime);
+        formData.append('endTime', assignment.endTime);
+        if (assignment.file) formData.append('file', assignment.file);
 
-        const response = await axios.post('/api/exams', formData, {
+        const response = await axios.post('/api/assignments', formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
 
-        return { ...exam, id: response.data.id, fileUrl: response.data.fileUrl, status: 'synced' };
+        return { ...assignment, id: response.data.id, fileUrl: response.data.fileUrl, status: 'synced' };
       });
 
-      // Save edited exams to the server
-      const editedExamPromises = editedExams.map(async (exam) => {
+      // Save edited assignments to the server
+      const editedAssignmentPromises = editedAssignments.map(async (assignment) => {
         const formData = new FormData();
-        formData.append('name', exam.name);
-        formData.append('description', exam.description);
-        formData.append('date', exam.date);
-        formData.append('startTime', exam.startTime);
-        formData.append('endTime', exam.endTime);
-        if (exam.file) formData.append('file', exam.file);
+        formData.append('name', assignment.name);
+        formData.append('description', assignment.description);
+        formData.append('date', assignment.date);
+        formData.append('startTime', assignment.startTime);
+        formData.append('endTime', assignment.endTime);
+        if (assignment.file) formData.append('file', assignment.file);
 
-        const response = await axios.put(`/api/exams/${exam.id}`, formData, {
+        const response = await axios.put(`/api/assignments/${assignment.id}`, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
 
-        return { ...exam, fileUrl: response.data.fileUrl, status: 'synced' };
+        return { ...assignment, fileUrl: response.data.fileUrl, status: 'synced' };
       });
 
       // Await all server operations to complete
-      const updatedNewExams = await Promise.all(newExamPromises);
-      const updatedEditedExams = await Promise.all(editedExamPromises);
+      const updatedNewAssignments = await Promise.all(newAssignmentPromises);
+      const updatedEditedAssignments = await Promise.all(editedAssignmentPromises);
 
-      // Merge the updated exams back into the state
-      setExams([
-        ...exams.filter(exam => exam.status === 'synced'), // Keep exams that are already synced
-        ...updatedNewExams,
-        ...updatedEditedExams,
+      // Merge the updated assignments back into the state
+      setAssignments([
+        ...assignments.filter(assignment => assignment.status === 'synced'), // Keep assignments that are already synced
+        ...updatedNewAssignments,
+        ...updatedEditedAssignments,
       ]);
 
       setChangesMade(false);
@@ -241,7 +247,7 @@ const TeacherAssignments = () => {
         <div className="flex-1 p-8 bg-gray-100 min-h-screen overflow-y-auto">
           <header className="mb-8">
             <h2 className="text-3xl font-semibold text-gray-800">Good morning, Teacher</h2>
-            <p className="text-gray-600">Manage your exams effectively with iSchool.</p>
+            <p className="text-gray-600">Manage your assignments effectively with iSchool.</p>
           </header>
 
           {/*{changesMade && (*/}
@@ -257,32 +263,32 @@ const TeacherAssignments = () => {
           <button
               onClick={() => setIsAdding(true)}
               className="mb-4 py-2 px-4 bg-purple-800 text-white rounded-full hover:bg-blue-600">
-            Add New Exam
+            Add New Assignment
           </button>
 
-          <h2 className="text-3xl font-semibold text-gray-800 my-10">Current Exams</h2>
+          <h2 className="text-3xl font-semibold text-gray-800 my-10">Current Assignments</h2>
           <div className="grid grid-cols-1 gap-4">
-            {exams.map(exam => (
-                <div key={exam.id} className="p-4 border rounded-3xl bg-white shadow">
-                  <h3 className="text-xl font-semibold">{exam.name}</h3>
-                  <p>{exam.description}</p>
-                  <p><strong>Date:</strong> {exam.date}</p>
-                  <p><strong>Time:</strong> {exam.startTime} - {exam.endTime}</p>
-                  {exam.fileUrl && (
+            {assignments.map(assignment => (
+                <div key={assignment.id} className="p-4 border rounded-3xl bg-white shadow">
+                  <h3 className="text-xl font-semibold">{assignment.name}</h3>
+                  <p>{assignment.description}</p>
+                  <p><strong>Date:</strong> {assignment.date}</p>
+                  <p><strong>Time:</strong> {assignment.startTime} - {assignment.endTime}</p>
+                  {assignment.fileUrl && (
                       <p>
-                        <a href={exam.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
+                        <a href={assignment.fileUrl} target="_blank" rel="noopener noreferrer" className="text-blue-500 underline">
                           View Uploaded File
                         </a>
                       </p>
                   )}
                   <button
-                      onClick={() => handleEditExam(exam)}
+                      onClick={() => handleEditAssignment(assignment)}
                       className="mr-2 py-1 px-3 bg-purple-800 text-white rounded-full hover:bg-yellow-500"
                   >
                     Edit
                   </button>
                   <button
-                      onClick={() => handleDeleteExam(exam.id)}
+                      onClick={() => handleDeleteAssignment(assignment.id)}
                       className="py-1 px-3 bg-red-500 text-white rounded-full hover:bg-red-600"
                   >
                     Delete
@@ -291,42 +297,42 @@ const TeacherAssignments = () => {
             ))}
           </div>
 
-          {(isAdding || selectedExam) && (
-              <Modal isOpen={true} onClose={() => { setIsAdding(false); setSelectedExam(null); }}>
+          {(isAdding || selectedAssignment) && (
+              <Modal isOpen={true} onClose={() => { setIsAdding(false); setSelectedAssignment(null); }}>
                 <div className="text-gray-800">
                   <h2 className="text-2xl font-semibold mb-4">
-                    {isAdding ? 'Add New Exam' : 'Edit Exam'}
+                    {isAdding ? 'Add New Assignment' : 'Edit Assignment'}
                   </h2>
                   <form>
                     <input
                         type="text"
-                        value={newExam.name}
-                        onChange={(e) => setNewExam({ ...newExam, name: e.target.value })}
-                        placeholder="Exam Name"
+                        value={newAssignment.name}
+                        onChange={(e) => setNewAssignment({ ...newAssignment, name: e.target.value })}
+                        placeholder="Assignment Name"
                         className="block w-full p-2 border mb-4 rounded"
                     />
                     <textarea
-                        value={newExam.description}
-                        onChange={(e) => setNewExam({ ...newExam, description: e.target.value })}
+                        value={newAssignment.description}
+                        onChange={(e) => setNewAssignment({ ...newAssignment, description: e.target.value })}
                         placeholder="Description"
                         className="block w-full p-2 border mb-4 rounded"
                     />
                     <input
                         type="date"
-                        value={newExam.date}
-                        onChange={(e) => setNewExam({ ...newExam, date: e.target.value })}
+                        value={newAssignment.date}
+                        onChange={(e) => setNewAssignment({ ...newAssignment, date: e.target.value })}
                         className="block w-full p-2 border mb-4 rounded"
                     />
                     <input
                         type="time"
-                        value={newExam.startTime}
-                        onChange={(e) => setNewExam({ ...newExam, startTime: e.target.value })}
+                        value={newAssignment.startTime}
+                        onChange={(e) => setNewAssignment({ ...newAssignment, startTime: e.target.value })}
                         className="block w-full p-2 border mb-4 rounded"
                     />
                     <input
                         type="time"
-                        value={newExam.endTime}
-                        onChange={(e) => setNewExam({ ...newExam, endTime: e.target.value })}
+                        value={newAssignment.endTime}
+                        onChange={(e) => setNewAssignment({ ...newAssignment, endTime: e.target.value })}
                         className="block w-full p-2 border mb-4 rounded"
                     />
                     <input
@@ -336,13 +342,13 @@ const TeacherAssignments = () => {
                     />
                   </form>
                   <button
-                      onClick={isAdding ? handleAddExam : handleSaveExam}
+                      onClick={isAdding ? handleAddAssignment : handleSaveAssignment}
                       className="mr-2 py-2 px-4 bg-green-500 text-white rounded hover:bg-green-600"
                   >
-                    {isAdding ? 'Add Exam' : 'Save Exam'}
+                    {isAdding ? 'Add Assignment' : 'Save Assignment'}
                   </button>
                   <button
-                      onClick={() => { setIsAdding(false); setSelectedExam(null); }}
+                      onClick={() => { setIsAdding(false); setSelectedAssignment(null); }}
                       className="py-2 px-4 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
                   >
                     Cancel

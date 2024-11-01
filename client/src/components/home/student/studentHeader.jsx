@@ -3,13 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button.jsx";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar.jsx";
 import { useEffect, useState } from "react";
+import {CLASS_INFO} from "@/utils/constants.js";
+import {apiClient} from "@/lib/apiClient.js";
 
 const StudentHeader = () => {
     const { userInfo } = useAppstore();
     const { image, firstName, lastName, email } = userInfo;
     const navigate = useNavigate();
-    const studentClass = "1/2";
-    const courses = ["Mathematics", "English", "Science", "Physics", "Arabic", "History", "French", "Geography"];
+    const [studentClass, setStudentClass] = useState("0");
     const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
 
     useEffect(() => {
@@ -19,6 +20,23 @@ const StudentHeader = () => {
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     });
+
+    useEffect(() => {
+        const fetchClass = async () => {
+            try {
+                const response = await apiClient.post(CLASS_INFO, {classId: userInfo.classId}, { withCredentials: true });
+                if (response.status === 200) {
+                    setStudentClass(response.data.name);
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        };
+
+        if (userInfo.classId) {
+            fetchClass();
+        }
+    }, [userInfo]);
 
 
     const handleClick = () => {

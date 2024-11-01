@@ -22,9 +22,8 @@ const addExamResults = async () => {
 
 			let studentResultCount = 0;
 
-			for (let i = 0; i < Math.min(5, studentExams.length); i++) {
-				const exam = studentExams[i];
-				const grade = faker.datatype.number({ min: 50, max: 100 });
+			for (const exam of studentExams) {
+				const grade = faker.datatype.number({ min: (exam.maxGrade / 2.5), max: exam.maxGrade });
 
 				const result = new Result({
 					grade,
@@ -36,8 +35,6 @@ const addExamResults = async () => {
 				studentResultCount++;
 				totalResultCount++;
 				console.log(`Result for Student ${student.firstName} ${student.lastName} in Exam ${exam.name} added to the database`);
-
-				if (studentResultCount >= 5) break;
 			}
 		}
 

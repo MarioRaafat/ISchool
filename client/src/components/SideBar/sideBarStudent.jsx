@@ -32,7 +32,7 @@ const SideBarStudent = () => {
             if (response.status === 200) {
                 setUserInfo(null);
                 localStorage.removeItem("token");
-                toast.success("Logged out successfully");
+                toast({ title: "Logged out successfully", type: "success" });
                 navigate("/author");
             } else {
                 console.log("Failed to log out");

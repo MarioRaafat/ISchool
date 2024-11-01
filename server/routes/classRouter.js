@@ -1,5 +1,5 @@
 import express from 'express';
-import { createClass, getAllClasses, getClassByName, addSubjectToClass, getStudentSubjects, getTeacherSubjects, getUpcomingCourses } from '../controllers/classController.js';
+import { createClass, getAllClasses, getClassByName, addSubjectToClass, getStudentSubjects, getTeacherSubjects, getUpcomingCourses, getStudentClass } from '../controllers/classController.js';
 import { verifyToken } from '../middlewares/verifyToken.js';
 
 const router = express.Router();
@@ -8,6 +8,7 @@ const router = express.Router();
 router.post('/', createClass);
 router.get('/', getAllClasses);
 router.get('/:name', getClassByName);
+router.post('/student', verifyToken, getStudentClass);
 router.post('/add_subject', verifyToken, addSubjectToClass);
 router.post('/student/courses', verifyToken, getStudentSubjects);
 router.post('/teacher/courses', verifyToken, getTeacherSubjects);

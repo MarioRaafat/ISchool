@@ -10,6 +10,7 @@ import {
     getExamsByStudent,
     getUpcomingExams,
     getLastExams,
+    getExamResultsByStudent,
 } from '../controllers/examController.js';
 import multer from "multer";
 import {verifyToken} from "../middlewares/verifyToken.js";
@@ -21,6 +22,7 @@ router.post('/create', verifyToken, upload.single('file'), createExam);
 router.get('/get-all', verifyToken, getAllExams);
 router.get('/teacher/:teacherId', verifyToken, getExamsByTeacher);
 router.get('/student/:studentId', verifyToken, getExamsByStudent);
+router.post('/student/result', verifyToken, getExamResultsByStudent);
 router.post('/upcoming', verifyToken, getUpcomingExams);
 router.post('/last', verifyToken, getLastExams);
 router.get('/:id', verifyToken, getExamById);

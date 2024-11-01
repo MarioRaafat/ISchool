@@ -1,11 +1,11 @@
 import React from 'react';
-import CurrentExams from './CurrentExams';
+import LastExams from './LastExams.jsx';
 import UpcomingExams from './UpcomingExams';
 import ProgressCircle from './ProgressCircle';
 import { useState, useEffect } from 'react';
 import {apiClient} from "@/lib/apiClient.js";
 import {useAppstore} from "../../../../store/index.js";
-import {RESULTS_STUDENT} from "@/utils/constants.js";
+import {EXAM_RESULTS_STUDENT} from "@/utils/constants.js";
 
 const StudentExam = () => {
 
@@ -17,7 +17,7 @@ const StudentExam = () => {
     useEffect(() => {
         const fetchResults = async () => {
             try {
-                const response = await apiClient.post(RESULTS_STUDENT, {studentId: userInfo.id});
+                const response = await apiClient.post(EXAM_RESULTS_STUDENT, {studentId: userInfo.id});
                 if (response.status === 200) {
                     const data = response.data;
                     const totalGrades = data.reduce((acc, result) => acc + result.grade, 0);
@@ -46,12 +46,12 @@ const StudentExam = () => {
 
       <section className="mb-8 grid grid-cols-1 md:grid-cols-2 gap-4">
         <ProgressCircle progress={lastExam} description={"Last Exam Percentage"} className="rounded-full" />
-        <ProgressCircle progress={average} description={"Average Score this Semester"} className="rounded-full" />
+        <ProgressCircle progress={average} description={"Average Exam Scores this Semester"} className="rounded-full" />
       </section>
 
       {/* Current Exams Section */}
       <h2 className="text-3xl font-semibold text-gray-800 my-10 ">Last Exams</h2>
-      <CurrentExams />
+      <LastExams />
 
       {/* Upcoming Exams Section */}
       <h2 className="text-3xl font-semibold text-gray-800 my-10">Upcoming Exams</h2>

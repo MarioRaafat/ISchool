@@ -1,7 +1,7 @@
 import models from '../models/index.js';
 import multer from 'multer';
 
-const { Exam, Student } = models;
+const { Exam, Student, Result, Class, Teacher } = models;
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -209,14 +209,19 @@ export const getUpcomingExams = async (req, res) => {
 }
 
 export const getLastExams = async (req, res) => {
-	const { classId } = req.body;
+	const { classId, studentId } = req.body;
 	const now = new Date();
 	try {
 		const exams = await Exam.findAll({ where: { class_id: classId } });
-		const lastExams = exams
+		const results = await Result.findAll({ where: { student_id: studentId } });
+		results.filter(result => result.exam_id !== null);
+		const lastExams = await Promise.all(exams
 			.filter(exam => exam.endDate < now)
-			.map(exam => {
+			.map(async exam => {
 				const date = exam.startDate.toString().slice(0, 10);
+				const teacher = await Teacher.findByPk(exam.teacher_id);
+				const studentResult = results.find(result => result.exam_id === exam.id);
+
 				let [startHours, startMinutes] = exam.startDate.toString().slice(16, 21).split(':');
 				let [endHours, endMinutes] = exam.endDate.toString().slice(16, 21).split(':');
 				const startPeriod = startHours >= 12 ? 'PM' : 'AM';
@@ -226,13 +231,18 @@ export const getLastExams = async (req, res) => {
 
 				return {
 					name: exam.name,
+					teacherName: `${teacher.firstName} ${teacher.lastName}`,
 					date,
+					grade: studentResult.grade,
+					maxGrade: exam.maxGrade,
 					startTime: `${startHours}:${startMinutes} ${startPeriod}`,
 					endTime: `${endHours}:${endMinutes} ${endPeriod}`,
 					examDate: exam.startDate
 				};
 			})
-			.sort((a, b) => b.examDate - a.examDate) // descending
+		);
+
+		lastExams.sort((a, b) => b.examDate - a.examDate); // descending
 
 		res.status(200).json(lastExams);
 	} catch (error) {
@@ -240,6 +250,33 @@ export const getLastExams = async (req, res) => {
 		res.status(500).json({ message: 'Error fetching exams' });
 	}
 }
+
+
+export const getExamResultsByStudent = async (req, res) => {
+	const { studentId } = req.body;
+	try {
+		const results = await Result.findAll({ where: { student_id: studentId } });
+		const formattedResults = await Promise.all(results
+			.filter(result => result.exam_id !== null)
+			.map(async (result) => {
+				const exam = await Exam.findByPk(result.exam_id);
+				return {
+					id: result.id,
+					grade: result.grade,
+					maxGrade: exam.maxGrade,
+					examName: exam.name,
+					examDescription: exam.description,
+					examStartDate: exam.startDate,
+					examEndDate: exam.endDate,
+					// examFile: exam.filePath
+				};
+			}));
+		res.status(200).json(formattedResults);
+	} catch (error) {
+		console.error(error);
+		res.status(500).json({ message: 'Error getting results' });
+	}
+};
 
 
 export { upload };

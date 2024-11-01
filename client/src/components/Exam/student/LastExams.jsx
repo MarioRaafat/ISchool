@@ -39,28 +39,27 @@ const dummyExams = [
 	},
 ];
 
-const CurrentExams = () => {
+const LastExams = () => {
   const { userInfo } = useAppstore();
   const [exams, setExams] = useState([]);
 
   useEffect(() => {
-    // const fetchLastExams = async () => {
-    //   try {
-    //     const response = await apiClient.post(LAST_EXAMS, { classId: userInfo.class_id });
-    //     if (response.status === 200 && response.data) {
-    //       setExams(response.data);
-    //     } else {
-    //       console.error('Error fetching last exams:', response);
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching last exams:', error);
-    //   }
-    // };
+    const fetchLastExams = async () => {
+      try {
+        const response = await apiClient.post(LAST_EXAMS, { classId: userInfo.classId, studentId: userInfo.id });
+        if (response.status === 200 && response.data) {
+          setExams(response.data);
+        } else {
+          console.error('Error fetching last exams:', response);
+        }
+      } catch (error) {
+        console.error('Error fetching last exams:', error);
+      }
+    };
 
-    // if (userInfo) {
-    //   fetchLastExams();
-	  // }
-	  setExams(dummyExams);
+    if (userInfo) {
+      fetchLastExams();
+	  }
   }, [userInfo]);
 
   return (
@@ -73,13 +72,15 @@ const CurrentExams = () => {
                 <Card>
                   <CardContent className="flex items-center justify-between p-6">
                     <div>
-                      <p className="text-xl md:text-2xl font-semibold">{exam.name}</p>
-                      <p className="text-sm md:text-base text-gray-500">Teacher: {exam.teacherName}</p>
-                      <p className="text-sm md:text-base text-gray-500">Avg Grade: {exam.avgGrade}</p>
-                      <p className="text-sm md:text-base text-gray-500">Rank: {exam.rank}</p>
+						<p className="text-xl md:text-2xl font-semibold">{exam.name}</p>
+						<p className="text-sm md:text-base text-gray-500">Teacher: {exam.teacherName}</p>
+						<p className="text-sm md:text-base text-gray-500">Date: {exam.date}</p>
+						<p className="text-sm md:text-base text-gray-500">Time: {`${exam.startTime} - ${exam.endTime}`}</p>
+						{/*<p className="text-sm md:text-base text-gray-500">Avg Grade: {exam.avgGrade}</p>*/}
+						{/*<p className="text-sm md:text-base text-gray-500">Rank: {exam.rank}</p>*/}
                     </div>
                     <div className="w-14 h-14">
-                      <ProgressCircleOnly progress={exam.avgGrade} />
+                      <ProgressCircleOnly progress={((exam.grade / exam.maxGrade) * 100).toFixed(1)} />
                     </div>
                   </CardContent>
                 </Card>
@@ -94,4 +95,4 @@ const CurrentExams = () => {
   );
 };
 
-export default CurrentExams;
+export default LastExams;

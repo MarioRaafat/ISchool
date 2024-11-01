@@ -135,8 +135,8 @@ export const getAssignmentsByTeacher = async (req, res) => {
 			name: assignment.name,
 			description: assignment.description,
 			date: assignment.startDate.toString().slice(0, 10),
-			startTime: assignment.startDate.toString().slice(16, 21),
-			endTime: assignment.endDate.toString().slice(16, 21),
+			startTime: assignment.startDate.toString().slice(11, 16),
+			endTime: assignment.endDate.toString().slice(11, 16),
 			maxGrade: assignment.maxGrade,
 			file: assignment.filePath,
 		}));

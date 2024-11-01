@@ -1,6 +1,6 @@
 import models from '../models/index.js';
 
-const { Class, Subject, ClassSubjects, Grade, Teacher, ClassTeachers} = models;
+const { Class, Subject, ClassSubjects, Grade, Teacher, ClassTeachers, Student} = models;
 
 // Create class
 export const createClass = async (req, res) => {
@@ -92,25 +92,29 @@ export const getStudentSubjects = async (req, res) => {
 	}
 };
 
+export const getStudentClass = async (req, res) => {
+	const {classId} = req.body;
+	try {
+		const class_ = await Class.findByPk(classId);
+		res.status(200).json(class_);
+	} catch (error) {
+		res.status(500).json({ message: 'An error occurred', error });
+	}
+};
+
 export const getTeacherSubjects = async (req, res) => {
-	// const { teacherId } = req.body;
-	// try {
-	// 	const teacher = await Teacher.findByPk(teacherId);
-	// 	if (!teacher) {
-	// 		return res.status(404).json({ message: 'Teacher not found' });
-	// 	}
-	// 	const classes = await teacher.getClasses({
-	// 		through: {
-	// 			model: ClassTeachers,
-	// 			attributes: ['id', 'name']
-	// 		}
-	// 	});
-	//
-	//
-	// 	res.status(200).json(subjects);
-	// } catch (error) {
-	// 	res.status(500).json({ message: 'An error occurred', error });
-	// }
+	const { teacherId } = req.body;
+	try {
+		const teacher = await Teacher.findByPk(teacherId, {include: 'Subjects'});
+		if (!teacher) {
+			return res.status(404).json({ message: 'Teacher not found' });
+		}
+		const courses = teacher.Subjects;
+
+		res.status(200).json(courses);
+	} catch (error) {
+		res.status(500).json({ message: 'An error occurred', error });
+	}
 }
 
 export const getUpcomingCourses = async (req, res) => {

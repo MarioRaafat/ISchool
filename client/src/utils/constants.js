@@ -11,7 +11,9 @@ export const LOGOUT_ROUTE = `${AUTH_ROUTE}/logout`;
 
 export const CLASS_ROUTE = "api/class";
 export const COURSES_STUDENT_ROUTE = `${CLASS_ROUTE}/student/courses`;
+export const COURSES_TEACHER_ROUTE = `${CLASS_ROUTE}/teacher/courses`;
 export const CLASS_UPCOMING_COURSES = `${CLASS_ROUTE}/upcomingCourses`;
+export const CLASS_INFO = `${CLASS_ROUTE}/student`;
 
 export const EXAM_ROUTE = "api/exam";
 export const EXAM_CREATE = `${EXAM_ROUTE}/create`;
@@ -21,6 +23,7 @@ export const EXAM_UPDATE_ROUTE = `${EXAM_ROUTE}/update`;
 export const EXAM_GET_ALL_ROUTE = `${EXAM_ROUTE}/get-all`;
 export const EXAM_TEACHER = `${EXAM_ROUTE}/teacher`;
 export const EXAM_STUDENT = `${EXAM_ROUTE}/student`;
+export const EXAM_RESULTS_STUDENT = `${EXAM_ROUTE}/student/result`;
 export const UPCOMING_EXAMS = `${EXAM_ROUTE}/upcoming`;
 export const LAST_EXAMS = `${EXAM_ROUTE}/last`;
 

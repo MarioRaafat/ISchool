@@ -7,7 +7,7 @@ import SideBarTeacher from "@/components/SideBar/sideBarTeacher.jsx";
 import SideBarStudent from "@/components/SideBar/sideBarStudent.jsx";
 import { useAppstore } from "../../../store/index.js";
 import {apiClient} from "@/lib/apiClient.js";
-import {COURSES_STUDENT_ROUTE} from "@/utils/constants.js";
+import {COURSES_STUDENT_ROUTE, COURSES_TEACHER_ROUTE} from "@/utils/constants.js";
 
 const localizer = momentLocalizer(moment);
 
@@ -58,7 +58,12 @@ const MyCalendar = () => {
 
     useEffect(() => {
         const fetchingCourses = async () => {
-            const response = await apiClient.post(COURSES_STUDENT_ROUTE, {classId: userInfo.classId},{withCredentials: true});
+            let response;
+            if (userInfo.type === "student") {
+                response = await apiClient.post(COURSES_STUDENT_ROUTE, {classId: userInfo.classId},{withCredentials: true});
+            } else {
+                response = await apiClient.post(COURSES_TEACHER_ROUTE, {teacherId: userInfo.id}, {withCredentials: true});
+            }
             if (response.status === 200 && response.data) {
                 const courses = response.data;
                 const events = courses.map((course) => {
