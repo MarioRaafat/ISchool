@@ -12,6 +12,6 @@ router.get('/', getAllGrades);
 // Get a grade by level
 router.get('/:level', getGradeByLevel);
 
-router.get('/:id', getGradeById);
+router.get('/id/:id', getGradeById);
 
 export default router;
