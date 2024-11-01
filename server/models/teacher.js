@@ -26,7 +26,17 @@ export default (sequelize, DataTypes) => {
 			unique: true,
 		},
 		phone: DataTypes.STRING,
-		image: DataTypes.STRING
+		image: DataTypes.STRING,
+		teachingYears: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0,
+		},
+		lessonsTaught: {
+			type: DataTypes.INTEGER,
+			allowNull: false,
+			defaultValue: 0,
+		}
 	}, {
 		indexes: [
 			{

@@ -52,3 +52,9 @@ export const RESULTS_STUDENT_RANK = `${RESULTS_ROUTE}/student/rank`;
 export const RESULTS_TEACHER_AVERAGE = `${RESULTS_ROUTE}/teacher/average`;
 
 export const GRADE_ROUTE = "api/grade/id";
+
+export const TEACHER_ROUTE = "api/teacher";
+export const TEACHER_INFO = `${TEACHER_ROUTE}`;
+export const TEACHER_UPCOMING_CLASSES = `${TEACHER_ROUTE}/upcoming-classes`;
+export const TEACHER_AVERAGE_PERFORMANCE = `${TEACHER_ROUTE}/average-performance`;
+export const TEACHER_AVERAGE_SCORES = `${TEACHER_ROUTE}/average-scores`;
